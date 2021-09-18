@@ -4,10 +4,9 @@ Version: 0.1.0
 Authors@R:
     c(person(given = "Yunshun",
            family = "Chen",
-           role = c("aut", "cre"),
+           role = c("aut"),
            email = "yuchen@wehi.edu.au",
            comment = c(ORCID = "0000-0003-4911-5653")),
-           
     person(given = "Jinming",
            family = "Cheng",
            role = c("aut", "cre"),
