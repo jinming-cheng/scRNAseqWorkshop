@@ -13,6 +13,6 @@ home:
 navbar:
   right:
    - icon: fa-github
-     href: https://jinming-cheng.github.io/scRNAseqWorkshop/
+     href: https://github.com/jinming-cheng/scRNAseqWorkshop/
      
 
