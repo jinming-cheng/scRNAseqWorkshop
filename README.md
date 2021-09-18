@@ -1,53 +1,81 @@
-# BuildABiocWorkshop
+# Single cell RNA-seq analysis workshop
 
-This package is a template for building a Bioconductor workshop. The package
-includes Github actions to:
+## Overview
 
-1. Set up bioconductor/bioconductor_docker:devel on Github resources
-2. Install package dependencies for your package (based on the `DESCRIPTION` file)
-3. Run `rcmdcheck::rcmdcheck`
-4. Build a pkgdown website and push it to github pages
-5. Build a docker image with the installed package and dependencies
+This workshop is a shorten version of SingleCellWorkshop from Yunshun Chen, and more details can be found [here](https://yunshun.github.io/SingleCellWorkshop/articles/SingleCellWorkshop.html).
 
-## Responsibilities
+In this workshop, you will learn how to analyse single-cell RNA-seq count data using Seurat and ternary plot. This workshop uses one epithelium sample of human normal mammary gland, which can be obtained from the 10X Genomics dataset (GSE161529) of [Pal et al. 2021. EMBO J.](https://doi.org/10.15252/embj.2020107333).
 
-This year, package authors will be primarily responsible for:
+## Pre-requisites
 
-1. Creating a landing site of their choosing for their workshops (a website). This website should be listed in the `DESCRIPTION` file as the `URL`.
-2. Creating a docker account and image that will contain workshop materials and the installed packages necessary to run those materials. The name of the resulting docker image, including "tag" if desired, should be listed in a non-standard tag, `DockerImage:` in the `DESCRIPTION` file. 
+The course is aimed at PhD students, Master's students, and third & fourth year undergraduate students.
+Some basic R knowledge is assumed - this is not an introduction to R course.
+If you are not familiar with the R statistical programming language it is compulsory that you work through an introductory R course before you attend this workshop
 
-Both of those tasks can be accomplished using the Github actions included in this template package. The vignette accompanying this package describes how to accomplish both of these tasks.
+## _R_ packages used
 
-## Details
+The following R packages will be used:
 
-For detailed instructions, see the `How to build a workshop` article/vignette.
+* Seurat
+* edgeR
+* vcd
+* scales
+* pheatmap
 
-## Results of successful deployment
 
-- A working docker image that contains the installed package and dependencies.
-- An up-to-date `pkgdown` website at https://YOURUSERNAME.github.io/YOURREPOSITORYNAME/
-- Docker image will be tagged with `latest`, `sha-XXXXXX` where `XXXXXX` is the hash of the current `master` commit, and `master`. 
+## Time outline
 
-## To use the resulting image:
+| Activity                         | Time |
+|----------------------------------|------|
+| Introduction & setup             | 10m  |
+| Part 1. Standard analysis        | 35m  |
+| Part 2. Ternary plot analysis    |  5m  |
+| Q & A                            | 10m  |
+
+
+## Workshop goals and objectives
+
+### Learning goals
+
+ - Learn the standard scRNA-seq analysis pipeline.
+ - Learn the ternary plot analysis for scRNA-seq data
+
+### Learning objectives
+
+ - Perform standard analysis of a single 10X scRNA-seq sample.
+ - Perform ternary plot analysis of a single 10X scRNA-seq sample
+
+## Workshop package installation
+
+### Guide
+This is necessary in order to reproduce the code shown in the workshop.
+The workshop is designed for R `4.1` and can be installed using one of the two ways below.
+
+### Via Docker image
+
+If you're familiar with [Docker](https://docs.docker.com/get-docker/) you could use the Docker image which has all the software pre-configured to the correct versions.
 
 ```sh
-docker run -e PASSWORD=<choose_a_password_for_rstudio> -p 8787:8787 YOURDOCKERIMAGENAME
-```
-Once running, navigate to https://localhost:8787/ and then login with `rstudio`:`yourchosenpassword`. 
-
-To try with **this** repository docker image:
-
-```sh
-docker run -e PASSWORD=abc -p 8787:8787 seandavi/buildabiocworkshop2020
+docker run -e PASSWORD=abc -p 8787:8787 jinmingcheng/scrnaseqworkshop
 ```
 
-*NOTE*: Running docker that uses the password in plain text like above exposes the password to others 
-in a multi-user system (like a shared workstation or compute node). In practice, consider using an environment 
-variable instead of plain text to pass along passwords and other secrets in docker command lines. 
+Once running, navigate to <http://localhost:8787/> and then login with
+`Username:rstudio` and `Password:abc`.
+
+You should see the Rmarkdown file with all the workshop code which you can run.
 
 
-## Whatcha get
+### Via GitHub
 
-https://seandavi.github.io/BuildABiocWorkshop
+Alternatively, you could install the workshop using the commands below in R `4.1`.
 
-![dockerhub](https://github.com/seandavi/BuildABiocWorkshop/raw/master/inst/images/dockerhub_result.png)
+```
+install.packages('remotes')
+
+# Install workshop package
+remotes::install_github("jinming-cheng/scRNAseqWorkshop", build_vignettes = TRUE)
+
+# To view vignettes
+library(scRNAseqWorkshop)
+browseVignettes("scRNAseqWorkshop")
+```

@@ -1,110 +1,402 @@
 ---
-title: "An Example Workshop"
-author: Sean Davis^[seandavi@gmail.com]
-output: rmarkdown::html_vignette
+title: "Seurat standard analysis of single cell RNA-seq data"
+author:
+  - name: Yunshun Chen
+    affiliation: 
+    - &wehi Walter and Eliza Hall Institute of Medical Research, 1G Royal Parade, Parkville, VIC 3052, Melbourne, Australia
+    email: yuchen@wehi.edu.au
+  - name: Jinming Cheng
+    affiliation: *wehi
+    email: cheng.j@wehi.edu.au
+date: September 17, 2021
 vignette: >
-  %\VignetteIndexEntry{An Example Workshop}
+  %\VignetteIndexEntry{Seurat standard analysis of single cell RNA-seq data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+bibliography: ref.bib
+output:
+  rmarkdown::html_vignette:
+    fig_caption: true
 ---
 
+# Introduction
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
+Single-cell RNA sequencing (scRNA-seq) has become a widely used technique that allows researchers to profile the gene expression and study molecular biology at the cellular level.
+It provides biological resolution that cannot be achieved with conventional bulk RNA-seq experiments on cell populations.
+
+Here, we provide a detailed workflow for analyzing the 10X single cell RNA-seq data from a single cell RNA expression atlas of human breast tissue [@pal2021scrnaseqatlas].
+This cell atlas explores the cellular heterogeneity of human mammary gland across different states including normal, pre-neoplastic and cancerous states.
+
+We will be using part of this cell atlas data to demonstrate how to perform a standard analysis for examining one single cell sample.
+Most of the analysis will be performed using the _Seurat_ package [@satija2015spatial].
+
+
+# Preliminary
+
+## Pre-processing the raw data
+
+The raw 10X data come in BCL format.
+They need to be pre-processed by software tools such as _cellranger_.
+
+We use _cellranger_ to convert BCL files into the FASTQ files, then align the reads to the human genome, and finally quantify the UMI counts for each gene in each cell.
+The entire analysis in this workflow is conducted within the R environment using the outputs from _cellranger_.
+We do not cover the details of running _cellranger_ as they are beyond the scope of this workflow.
+The information of how to run _cellranger_ is available at [here](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/what-is-cell-ranger).
+
+
+```{r GlobalOptions, echo=FALSE, include=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(fig.width=6, fig.height=5.5, fig.align='center')
+#knitr::opts_chunk$set(error=FALSE, prompt=TRUE, comment=NA)
+knitr::opts_chunk$set(message=FALSE, warning=FALSE, echo=TRUE)
+#knitr::opts_chunk$set(cache=TRUE, cache.lazy=FALSE)
+options(digits=3)
+options(width=90)
+set.seed(2020)
 ```
 
-# Workshop Title
 
-Authors:
-    Author Name^[Institution],
-    Another Author^[Another Institution].
-    <br/>
-Last modified: 14 May, 2018.
+## Downloading the read counts
 
-## Overview
+In this workshop, we will use one sample from this published study [@pal2021scrnaseqatlas].
+This sample correspond to one patient with the following ID: N1469, and the accession number of the sample is GSM4909258.
 
-### Description
+We first create a `Data` folder under the current working directory.
+Then we make a subfolder with the patient ID as the folder name under the `Data` folder.
 
-Along with the topic of your workshop, include how students can expect
-to spend their time. For the description may also include information
-about what type of workshop it is (e.g. instructor-led live demo, lab,
-lecture + lab, etc.). Instructors are strongly recommended to provide
-completely worked examples for lab sessions, and a set of stand-alone
-notes that can be read and understood outside of the workshop.
-
-### Pre-requisites
-
-List any workshop prerequisites, for example:
-
-* Basic knowledge of R syntax
-* Familiarity with the GenomicRanges class
-* Familiarity with xyz vignette (provide link)
-
-List relevant background reading for the workshop, including any
-theoretical background you expect students to have.
-
-* List any textbooks, papers, or other reading that students should be
-  familiar with. Include direct links where possible.
-
-### Participation
-
-Describe how students will be expected to participate in the workshop.
-
-### _R_ / _Bioconductor_ packages used
-
-List any _R_ / _Bioconductor_ packages that will be explicitly covered.
-
-### Time outline
-
-An example for a 45-minute workshop:
-
-| Activity                     | Time |
-|------------------------------|------|
-| Packages                     | 15m  |
-| Package Development          | 15m  |
-| Contributing to Bioconductor | 5m   |
-| Best Practices               | 10m  |
-
-### Workshop goals and objectives
-
-List "big picture" student-centered workshop goals and learning
-objectives. Learning goals and objectives are related, but not the
-same thing. These goals and objectives will help some people to decide
-whether to attend the conference for training purposes, so please make
-these as precise and accurate as possible.
-
-*Learning goals* are high-level descriptions of what
-participants will learn and be able to do after the workshop is
-over. *Learning objectives*, on the other hand, describe in very
-specific and measurable terms specific skills or knowledge
-attained. The [Bloom's Taxonomy](#bloom) may be a useful framework
-for defining and describing your goals and objectives, although there
-are others.
-
-### Learning goals
-
-Some examples:
-
-* describe how to...
-* identify methods for...
-* understand the difference between...
-
-### Learning objectives
-
-* analyze xyz data to produce...
-* create xyz plots
-* evaluate xyz data for artifacts
-
-## Workshop
-
-Divide the workshop into sections (`## A Section`). Include
-fully-evaluated _R_ code chunks. Develop exercises and solutions, and
-anticipate that your audience will walk through the code with you, or
-work on the code idependently -- do not be too ambitious in the
-material that you present.
+```{r Sample}
+OneSample <- c("N1469")
+out_dir  <- file.path("Data", OneSample)
+if (!dir.exists(out_dir)) dir.create(out_dir, recursive = TRUE)
+```
 
 
+The cellranger output consists of three data files: a count matrix in _mtx.gz_ format, barcode information in _tsv.gz_ format, and feature information in _tsv.gz_.
+We download the three data files of this sample from GEO and store them in the subfolder.
 
+
+```{r Download, eval=TRUE}
+GSM <- "https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM4909nnn/"
+url.matrix <- paste0(GSM,
+                     "GSM4909258/suppl/GSM4909258_N-NF-Epi-matrix.mtx.gz")
+url.barcodes <- gsub("matrix.mtx", "barcodes.tsv", url.matrix)
+url.features <- "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE161nnn/GSE161529/suppl/GSE161529_features.tsv.gz"
+
+utils::download.file(url.matrix, destfile=paste0("Data/", OneSample, "/matrix.mtx.gz"), mode="wb") 
+utils::download.file(url.barcodes, destfile=paste0("Data/", OneSample, "/barcodes.tsv.gz"), mode="wb") 
+utils::download.file(url.features, destfile=paste0("Data/", OneSample, "/features.tsv.gz"), mode="wb") 
+
+```
+
+
+# Standard analysis
+
+## Read in the data
+
+We load the Seurt package and read in the 10X data for Patient N1469.
+The object `N1469.data` is a sparse matrix containing the raw count data of Patient N1469.
+Rows are features (genes) and columns are cells.
+By default, the column names of the data are the cell barcodes.
+```{r loadSeurat}
+library(Seurat)
+N1469.data <- Read10X(data.dir = "Data/N1469")
+colnames(N1469.data) <- paste("N1469", colnames(N1469.data), sep="_")
+```
+
+
+We then create a Seurat object `N1469`.
+Genes expressed in less than 3 cells are removed.
+Cells with at least 200 detected genes are kept in the analysis.
+```{r SeuratObject}
+N1469 <- CreateSeuratObject(counts=N1469.data, project="N1469", min.cells=3, min.features=200)
+```
+
+
+## Quality control
+
+Quality control is essential for scRNA-seq analysis.
+Cells of low quality and genes of low expression shall be removed prior to the analysis.
+
+Two common measures of cell quality are the library size and the number of expressed genes in each cell.
+The number of unique genes and total molecules (library size) are automatically calculated during `CreateSeuratObject()`.
+Another measure to look at is the proportion of reads from mitochondrial genes in each cell.
+Cells with higher mitochondrial content are more prone to die, hence, they should also be removed from the analysis [@ilicic2016classification].
+Here, we calculate the percentages of reads from mitochondrial genes and store them in the metadata of the Seurat object.
+We use the set of all genes starting with MT- as a set of mitochondrial genes.
+```{r MT}
+N1469[["percent.mt"]] <- PercentageFeatureSet(N1469, pattern = "^MT-")
+```
+
+
+The QC metrics of a Seurat object can be viewed as follows.
+```{r QCMetric}
+head(N1469@meta.data)
+```
+
+
+Scatter plots can be produced for visualizing some of the QC metrics.
+```{r QC_Scatter_plot, fig.cap="Scatter plots of QC metrics.", fig.height=4, fig.width=9}
+plot1 <- FeatureScatter(N1469, feature1 = "nCount_RNA", feature2 = "percent.mt", plot.cor=FALSE)
+plot2 <- FeatureScatter(N1469, feature1 = "nCount_RNA", feature2 = "nFeature_RNA", plot.cor=FALSE)
+plot1 + plot2
+```
+
+
+For this particular data, we filter cells that have unique features less than 500 and with >20\% mitochondrial counts.
+```{r CellFilter}
+N1469 <- subset(N1469, subset = nFeature_RNA > 500 & percent.mt < 20)
+```
+
+
+## Normalization
+
+After cell filtering, the next step is normalization.
+Normalization is useful for removing cell-specific biases.
+
+Here, we perform the default normalization method in Seurat, which divides gene counts by the total counts for each cell, multiplies this by a scale factor of 10,000, and then log-transforms the result.
+```{r Normalization}
+N1469 <- NormalizeData(N1469)
+```
+
+
+## Highly variable genes
+
+Single cell RNA-seq data are often used for exploring heterogeneity within cell population.
+To reduce the computational complexity of downstream calculations and also to focus on the true biological signal, a subset of highly variable genes (HVGs) is often selected prior to downstream analyses.
+One of the most commonly used strategies is to take the top genes with the highest variances across all the cells.
+The choice of the number of HVGs is fairly arbitrary, with any value from 500 to 5000 considered reasonable.
+
+For this data, we select top 1500 HVGs to be used in downstream analyses such as PCA and UMAP visualization.
+```{r HVG}
+N1469 <- FindVariableFeatures(N1469, selection.method="vst", nfeatures=1500)
+```
+
+
+A mean-variance plot can be produced for visualizing the top variable genes.
+```{r HVG_plot, fig.cap="A mean-variance plot where top 1500 HVGs are highlighted in red and top 50 HVGs are labelled.", fig.height=5, fig.width=7}
+top50 <- head(VariableFeatures(N1469), 50)
+plot1 <- VariableFeaturePlot(N1469)
+plot2 <- LabelPoints(plot=plot1, points=top50, repel=TRUE)
+plot2
+```
+
+
+Before proceeding to dimension reduction, we apply a linear transformation to "scale" the data.
+This data scaling is performed by the `ScaleData()` function, which standardizes the expression of each gene to have a mean expression of 0 and a variance of 1 across all the cells.
+This step gives equal weight to the genes used in downstream analyses so that highly-expressed genes do not dominate.
+
+By default, the scaling process is only applied to the previously identified 1500 HVGs as these HVGs are used for the downstream analyses.
+```{r Scaling}
+N1469 <- ScaleData(N1469)
+```
+
+
+## Dimension reduction
+
+Dimension reduction is an essential step in single cell analysis.
+It summarizes the variances of thousands of genes in a much lower numbers of dimensions, hence reduces computational work in downstream analyses.
+A simple, highly effective and widely used approach for linear dimension reduction is principal components analysis (PCA).
+The top PCs would capture the dominant factors of heterogeneity in the data set. 
+
+Here, we perform PCA on the scaled data. 
+By default, only the previously determined 1500 HVGs are used and the first 50 PCs are computed and returned.
+The PCA results can be visualized in a PCA plot.
+```{r PCA, fig.cap="PCA plot showing the first two principal components of the data.", fig.height=5.5, fig.width=7}
+N1469 <- RunPCA(N1469, features=VariableFeatures(N1469))
+DimPlot(N1469, reduction = "pca")
+```
+
+
+Although PCA greatly reduces the dimension of the data from thousands of genes to 50 PCs, it is still difficult to visualize and interpret the 50 PCs at the same time.
+Therefore, further dimension reduction strategies are required to compress the data into 2-3 dimensions for a more intuitive understanding of the data.
+The two popular non-linear dimension reduction techniques are _t_-stochastic neighbor embedding (tSNE) [@van2008visualizing] and uniform manifold approximation and projection (UMAP) [@mcinnes2018umap].
+
+It is debatable whether the UMAP or tSNE visualization is better. 
+tSNE tends to have more compact visual clusters but reduces resolution within each cluster. 
+The main reason that UMAP has an increasing popularity is that UMAP is much faster than tSNE. 
+Note that both UMAP and tSNE involve a series of randomization steps so setting the seed is critical.
+
+Here we perform both UMAP and tSNE for dimension reduction and visualization.
+The top 30 PCs are used as input and a random seed is used for reproducibility.
+```{r DR_plot, fig.cap="UMAP and t-SNE visualization", fig.height=4, fig.width=9}
+dimUsed <- 30
+N1469 <- RunUMAP(N1469, dims=1:dimUsed, seed.use=2021, verbose=FALSE)
+N1469 <- RunTSNE(N1469, dims=1:dimUsed, seed.use=2021)
+plot1 <- DimPlot(N1469, reduction = "umap")
+plot2 <- DimPlot(N1469, reduction = "tsne")
+plot1 + plot2
+```
+
+
+## Cell clustering
+
+Cell clustering is a procedure in scRNA-seq data analysis to group cells with similar expression profiles.
+It is an important step for summarizing information and providing biological interpretation of the data.
+Seurat offers a graph-based clustering approach, which is one of the most popular clustering algorithms due to its flexibilty and scalability for large scRNA-seq datasets.
+
+One of the most commonly asked questions in cell clustering is "how many cell clusters are there in the data?"
+This question is often hard to answer since we can define as many clusters as we want.
+In fact, the number of clusters would depend on the biological questions of interest (eg. whether resolution of the major cell types will be sufficient or resolution of subtypes is required).
+In practice, we often experiment with different resolution in data exploration to obtain the "optimal" resolution that provides the best answer to the questions of our interest.
+
+In Seurat, the cell clustering procedure starts by constructing a KNN graph using the `FindNeighbors()` function.
+Here, we use the top 30 PCs as input.
+Then the Seurat `FindClusters()` function applies the Louvain algorithm (by default) to group cells together.
+For this particular data, we set the resolution parameter to 0.1.
+The final clusters can be found using the `Idents()` function.
+```{r Cluster}
+N1469 <- FindNeighbors(N1469, dims=1:dimUsed)
+N1469 <- FindClusters(N1469, resolution=0.1)
+table(Idents(N1469))
+```
+
+
+We can visualize the cell clusters in a UMAP plot.
+```{r UMAP, fig.cap="UMAP visualization where cells are coloured by cell cluster.", fig.height=6.5, fig.width=7.5}
+DimPlot(N1469, reduction = "umap", label = TRUE)
+```
+
+
+## Marker genes identification
+
+The next step after cell clustering is to identify marker genes that drive separation between the cell clusters.
+Marker genes are usually obtained by performing differential expression analyses between different clusters.
+In Seurat, the differential expression analysis is performed by the `FindMarkers()` function.
+By default, it identifies positive and negative markers of a single cluster (specified in `ident.1`), compared to all other cells.
+
+To increase the computational speed, the Seurat `FindMarkers()` function only performs DE tests on a subset of genes that satisfy certain thresholds.
+The `min.pct` argument requires a gene to be detected at a minimum percentage in either of the two groups of cells, and by default it is set to 10\%.
+The `logfc.threshold` limits testing to genes of which the log-fold change between the two groups is above a certain level (0.25 by default).
+By default the `FindMarkers()` function performs Wilcoxon Rank Sum tests, but other statistical tests (eg. likelihood-ratio test, _t_-test) are also available.
+
+Here we find all markers of cluster 1 as follows.
+```{r Markers1}
+cluster1.markers <- FindMarkers(N1469, ident.1 = 1, min.pct = 0.25)
+head(cluster1.markers)
+```
+
+
+To find all markers distinguishing cluster 2 from clusters 0 and 1, we use the following lines.
+```{r Markers2}
+cluster2.markers <- FindMarkers(N1469, ident.1 = 2, ident.2 = c(0, 1), min.pct = 0.25)
+head(cluster2.markers)
+```
+
+
+The Seurat `FindAllMarkers()` function automates the marker detection process for all clusters.
+Here we find markers for every cluster compared to all remaining cells, report only the positive ones.
+```{r AllMarkers}
+N1469.markers <- FindAllMarkers(N1469, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+```
+
+
+We select the top 3 marker genes for each of cluster and list them below.
+```{r TopMarkers}
+topMarkers <- split(N1469.markers, N1469.markers$cluster)
+top3 <- lapply(topMarkers, head, n=3)
+top3 <- do.call("rbind", top3)
+top3
+```
+
+
+The expression level of the top marker genes can be overlaid on the UMAP plots for visualization.
+```{r FeaturePlotMarkers, fig.cap="Top marker expression visualizations on a UMAP plot.", fig.height=15, fig.width=11}
+FeaturePlot(N1469, features = top3$gene, ncol=3)
+```
+
+
+A dot plot can also be produced for visualizing the top marker genes.
+```{r DotPlotMarkers, fig.cap="A dot plot of top marker genes of each cluster.", fig.height=4, fig.width=8}
+DotPlot(N1469, features = top3$gene, dot.scale = 8) + RotatedAxis()
+```
+
+
+## Cell type annotation
+
+Interpreting cell clusters in biological context is one of the most challenging tasks in scRNA-seq data analysis.
+Prior biological knowledge is often required to do so.
+Marker genes from the literatures or the curated gene sets (e.g., Gene Ontology, KEGG pathways) are the common sources of prior information.
+Alternatively, we can use published reference datasets where samples are well annotated with cell type information.
+
+Here we use a reference bulk RNA-seq dataset of human mammary gland epithelium from the same study [@pal2021scrnaseqatlas].
+This reference RNA-seq (GSE161892) data consists of a total of 34 samples from basal, luminal progenitor (LP), mature luminal (ML), and stromal cell types.
+Differential expression analysis of this reference data was performed using limma-voom and TREAT [@law2014voom; @mccarthy2009testing]. 
+Genes were considered cell type-specific if they were upregulated in one cell type vs all other types. 
+This yielded 515, 323, 765, and 1094 signature genes for basal, LP, ML, and stroma, respectively.
+
+
+Here we download those signature genes and load them into R.
+```{r HumanSig, eval=TRUE}
+url.Signatures <- "https://github.com/SmythLab/scRNAseq-Workshop/raw/main/Data/Human-PosSigGenes.RData"
+utils::download.file(url.Signatures, destfile="Data/Human-PosSigGenes.RData", mode="wb") 
+```
+
+
+We restrict the signature genes to those expressed in the single cell data.
+```{r LoadSig}
+load("Data/Human-PosSigGenes.RData")
+HumanSig <- list(Basal=Basal, LP=LP, ML=ML, Str=Str)
+HumanSig <- lapply(HumanSig, intersect, rownames(N1469))
+```
+
+
+To associate each cell in the single cell data with the four cell populations in the reference bulk data, we compute the signature scores of the four cell populations for each cell.
+Here the signature score of a particular cell type is defined as the average expression level of the cell type-specific genes in a given cell.
+```{r SigScores}
+SigScore <- list()
+for(i in 1:length(HumanSig)){
+    SigScore[[i]] <- colMeans(N1469@assays$RNA@data[HumanSig[[i]], ])
+}
+```
+
+
+We can visualize the signature scores in both UMAP plots and violin plots.
+```{r AddMetaData}
+SigScores <- do.call("cbind", SigScore)
+colnames(SigScores) <- c("Basal", "LP", "ML", "Stroma")
+N1469@meta.data <- cbind(N1469@meta.data, SigScores)
+```
+
+```{r SigScorePlot, fig.cap="Signature scores.", fig.height=8.5, fig.width=10}
+FeaturePlot(N1469, features = colnames(SigScores))
+```
+
+```{r SigScoreViolinPlot, fig.cap="Violin plots of signature scores.", fig.height=8, fig.width=11}
+VlnPlot(N1469, features = colnames(SigScores), ncol=2, pt.size=0.1)
+```
+
+It can be seen that cells in cluster 2 have high expression levels of basal signature genes, suggesting these cells are likely to be basal cells.
+Likewise, cluster 0 and 4 are LP, cluster 1 is ML and cluster 3 is stroma.
+
+
+## ternary plot analysis
+
+Another way to visualize the correlation between the single cell and the reference bulk dataset is to make a ternary plot, which is useful for studies concerning three major cell populations.
+For this data, we are particularly interested in assigning each cell to one of the three major epithelial cell populations (basal, LP and ML).
+
+We produce a ternary plot to see which of the three populations the cells are closer to.
+To measure the similarity between each cell and three populations, we count the numbers of expressed signatures (with at least 1 count) in each cell.
+The position of each cell on the ternary plot is determined by the numbers of expressed gene signatures of the three populations in that cell.
+```{r InputForTenaryPlot}
+TN <- matrix(0L, ncol(N1469), 3L)
+colnames(TN) <- c("LP", "ML", "Basal")
+for(i in colnames(TN)){
+    TN[, i] <- colSums(N1469@assays$RNA@counts[HumanSig[[i]], ] > 0L)
+}
+head(TN)
+```
+
+```{r TernaryPlot, message=FALSE, fig.cap="Ternary plot positioning each cell according to the proportion of basal, LP, or ML signature genes expressed by that cell.", fig.height=5.5, fig.width=5.5}
+library(vcd)
+col.p <- scales::hue_pal()(nlevels(Idents(N1469)))
+ternaryplot(TN, cex=0.2, pch=16, col=col.p[Idents(N1469)], grid=TRUE)
+```
+
+
+# Session info
+
+```{r}
+sessionInfo()
+```
+
+
+# References

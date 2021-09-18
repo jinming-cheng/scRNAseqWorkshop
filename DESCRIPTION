@@ -1,28 +1,33 @@
-Package: BuildABiocWorkshop
-Title: Bioconductor Workshop Template and Github Actions
-Version: 0.9.0
-Authors@R: 
-    person(given = "Sean",
-           family = "Davis",
+Package: scRNAseqWorkshop
+Title: Single cell RNA-seq analysis workshop
+Version: 0.1.0
+Authors@R:
+    c(person(given = "Yunshun",
+           family = "Chen",
            role = c("aut", "cre"),
-           email = "seandavi@gmail.com",
-           comment = c(ORCID = "your-orc-id-here"))
-Description: This package serves as a template for using github actions to 
-    prepare a Bioconductor Workshop package for use. In particular,
-    a pkgdown website and docker image are generated based on workflow 
-    settings. 
+           email = "yuchen@wehi.edu.au",
+           comment = c(ORCID = "0000-0003-4911-5653")),
+           
+    person(given = "Jinming",
+           family = "Cheng",
+           role = c("aut", "cre"),
+           email = "cheng.j@wehi.edu.au",
+           comment = c(ORCID = "0000-0003-3806-4694"))
+           )
+Description: This package describes the Seurat standard analysis for single cell RNA-seq data. 
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.0
 Depends: 
-    Biobase
+    Seurat, edgeR, vcd, scales, pheatmap
 Suggests: 
     knitr,
     rmarkdown,
+    markdown,
     pkgdown
-URL: https://seandavi.github.io/BuildABiocWorkshop/
-BugReports: https://github.com/seandavi/BuildABiocWorkshop/issues/new/choose
+URL: https://jinming-cheng.github.io/scRNAseqWorkshop/
+BugReports: https://github.com/jinming-cheng/scRNAseqWorkshop/issues/new/choose
 VignetteBuilder: knitr
-DockerImage: seandavi/buildabiocworkshop:latest
+DockerImage: jinmingcheng/scrnaseqworkshop:latest
