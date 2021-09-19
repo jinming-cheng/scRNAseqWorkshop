@@ -8,7 +8,7 @@ author:
   - name: Jinming Cheng
     affiliation: *wehi
     email: cheng.j@wehi.edu.au
-date: September 17, 2021
+date: September 19, 2021
 vignette: >
   %\VignetteIndexEntry{Seurat standard analysis of single cell RNA-seq data}
   %\VignetteEngine{knitr::rmarkdown}
@@ -211,7 +211,7 @@ Therefore, further dimension reduction strategies are required to compress the d
 The two popular non-linear dimension reduction techniques are _t_-stochastic neighbor embedding (tSNE) [@van2008visualizing] and uniform manifold approximation and projection (UMAP) [@mcinnes2018umap].
 
 It is debatable whether the UMAP or tSNE visualization is better. 
-tSNE tends to have more compact visual clusters but reduces resolution within each cluster. 
+UMAP tends to have more compact visual clusters but reduces resolution within each cluster. 
 The main reason that UMAP has an increasing popularity is that UMAP is much faster than tSNE. 
 Note that both UMAP and tSNE involve a series of randomization steps so setting the seed is critical.
 
@@ -247,6 +247,12 @@ The final clusters can be found using the `Idents()` function.
 N1469 <- FindNeighbors(N1469, dims=1:dimUsed)
 N1469 <- FindClusters(N1469, resolution=0.1)
 table(Idents(N1469))
+```
+
+We can also obtain the final clusters from the metadata.
+```{r Metadata}
+colnames(N1469@meta.data)
+table(N1469@meta.data$seurat_clusters)
 ```
 
 
@@ -368,7 +374,7 @@ It can be seen that cells in cluster 2 have high expression levels of basal sign
 Likewise, cluster 0 and 4 are LP, cluster 1 is ML and cluster 3 is stroma.
 
 
-## ternary plot analysis
+# Ternary plot analysis
 
 Another way to visualize the correlation between the single cell and the reference bulk dataset is to make a ternary plot, which is useful for studies concerning three major cell populations.
 For this data, we are particularly interested in assigning each cell to one of the three major epithelial cell populations (basal, LP and ML).
@@ -389,6 +395,22 @@ head(TN)
 library(vcd)
 col.p <- scales::hue_pal()(nlevels(Idents(N1469)))
 ternaryplot(TN, cex=0.2, pch=16, col=col.p[Idents(N1469)], grid=TRUE)
+```
+
+Alternatively, the relative proportions of expressed signature genes of the cells can be used for the ternary plot analysis.
+
+```{r SignatureGeneNumber}
+LengthSig = unlist(lapply(HumanSig, length))[c("LP", "ML", "Basal")]
+LengthSig
+```
+
+```{r InputForTenaryPlot_prop}
+TN_prop <- t( t(TN) / LengthSig ) 
+head(TN_prop)
+```
+
+```{r TernaryPlot_prop, message=FALSE, fig.cap="Ternary plot positioning each cell according to the relative proportion of basal, LP, or ML signature genes expressed by that cell.", fig.height=5.5, fig.width=5.5}
+ternaryplot(TN_prop, cex=0.2, pch=16, col=col.p[Idents(N1469)], grid=TRUE)
 ```
 
 

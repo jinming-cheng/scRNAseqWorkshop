@@ -2,9 +2,9 @@
 
 ## Overview
 
-This workshop is a shorten version of SingleCellWorkshop from Yunshun Chen, and more details can be found [here](https://yunshun.github.io/SingleCellWorkshop/articles/SingleCellWorkshop.html).
+This workshop is a shortened version of the [SingleCellWorkshop](https://yunshun.github.io/SingleCellWorkshop/articles/SingleCellWorkshop.html) from Yunshun Chen, and more details can be found [here](https://jinming-cheng.github.io/scRNAseqWorkshop/articles/scRNAseqWorkshop.html).
 
-In this workshop, you will learn how to analyse single-cell RNA-seq count data using Seurat and ternary plot. This workshop uses one epithelium sample of human normal mammary gland, which can be obtained from the 10X Genomics dataset (GSE161529) of [Pal et al. 2021. EMBO J.](https://doi.org/10.15252/embj.2020107333).
+In this workshop, you will learn how to analyse single-cell RNA-seq count data using Seurat and ternary plot. This workshop uses one epithelium sample of human normal mammary gland, which can be obtained from the 10X Genomics dataset ([GSE161529](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE161529)) of [Pal et al. 2021. EMBO J](https://doi.org/10.15252/embj.2020107333).
 
 ## Pre-requisites
 
@@ -29,7 +29,7 @@ The following R packages will be used:
 |----------------------------------|------|
 | Introduction & setup             | 10m  |
 | Part 1. Standard analysis        | 35m  |
-| Part 2. Ternary plot analysis    |  5m  |
+| Part 2. Ternary plot analysis    | 05m  |
 | Q & A                            | 10m  |
 
 
@@ -69,7 +69,7 @@ You should see the Rmarkdown file with all the workshop code which you can run.
 
 Alternatively, you could install the workshop using the commands below in R `4.1`.
 
-```
+```r
 install.packages('remotes')
 
 # Install workshop package
