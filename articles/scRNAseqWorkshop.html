@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scRNAseqWorkshop</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
       </span>
     </div>
 
@@ -80,7 +80,7 @@
       Walter and Eliza Hall Institute of Medical Research, 1G Royal Parade, Parkville, VIC 3052, Melbourne, Australia<br><a class="author_email" href="mailto:#"></a><a href="mailto:cheng.j@wehi.edu.au" class="email">cheng.j@wehi.edu.au</a>
       </address>
                   
-            <h4 class="date">September 17, 2021</h4>
+            <h4 class="date">September 19, 2021</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jinming-cheng/scRNAseqWorkshop/blob/master/vignettes/scRNAseqWorkshop.Rmd"><code>vignettes/scRNAseqWorkshop.Rmd</code></a></small>
       <div class="hidden name"><code>scRNAseqWorkshop.Rmd</code></div>
@@ -218,7 +218,7 @@ PCA plot showing the first two principal components of the data.
 </p>
 </div>
 <p>Although PCA greatly reduces the dimension of the data from thousands of genes to 50 PCs, it is still difficult to visualize and interpret the 50 PCs at the same time. Therefore, further dimension reduction strategies are required to compress the data into 2-3 dimensions for a more intuitive understanding of the data. The two popular non-linear dimension reduction techniques are <em>t</em>-stochastic neighbor embedding (tSNE) <span class="citation">(Van der Maaten and Hinton 2008)</span> and uniform manifold approximation and projection (UMAP) <span class="citation">(McInnes, Healy, and Melville 2018)</span>.</p>
-<p>It is debatable whether the UMAP or tSNE visualization is better. tSNE tends to have more compact visual clusters but reduces resolution within each cluster. The main reason that UMAP has an increasing popularity is that UMAP is much faster than tSNE. Note that both UMAP and tSNE involve a series of randomization steps so setting the seed is critical.</p>
+<p>It is debatable whether the UMAP or tSNE visualization is better. UMAP tends to have more compact visual clusters but reduces resolution within each cluster. The main reason that UMAP has an increasing popularity is that UMAP is much faster than tSNE. Note that both UMAP and tSNE involve a series of randomization steps so setting the seed is critical.</p>
 <p>Here we perform both UMAP and tSNE for dimension reduction and visualization. The top 30 PCs are used as input and a random seed is used for reproducibility.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">dimUsed</span> <span class="op">&lt;-</span> <span class="fl">30</span>
@@ -256,8 +256,18 @@ UMAP and t-SNE visualization
 <pre><code>## 
 ##    0    1    2    3    4 
 ## 1699  507  421  213   28</code></pre>
-<p>We can visualize the cell clusters in a UMAP plot.</p>
+<p>We can also obtain the final clusters from the metadata.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">N1469</span><span class="op">@</span><span class="va">meta.data</span><span class="op">)</span></code></pre></div>
+<pre><code>## [1] "orig.ident"      "nCount_RNA"      "nFeature_RNA"    "percent.mt"     
+## [5] "RNA_snn_res.0.1" "seurat_clusters"</code></pre>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">N1469</span><span class="op">@</span><span class="va">meta.data</span><span class="op">$</span><span class="va">seurat_clusters</span><span class="op">)</span></code></pre></div>
+<pre><code>## 
+##    0    1    2    3    4 
+## 1699  507  421  213   28</code></pre>
+<p>We can visualize the cell clusters in a UMAP plot.</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">N1469</span>, reduction <span class="op">=</span> <span class="st">"umap"</span>, label <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="scRNAseqWorkshop_files/figure-html/UMAP-1.png" alt="UMAP visualization where cells are coloured by cell cluster." width="720"><p class="caption">
@@ -271,7 +281,7 @@ UMAP visualization where cells are coloured by cell cluster.
 <p>The next step after cell clustering is to identify marker genes that drive separation between the cell clusters. Marker genes are usually obtained by performing differential expression analyses between different clusters. In Seurat, the differential expression analysis is performed by the <code><a href="https://satijalab.org/seurat/reference/FindMarkers.html">FindMarkers()</a></code> function. By default, it identifies positive and negative markers of a single cluster (specified in <code>ident.1</code>), compared to all other cells.</p>
 <p>To increase the computational speed, the Seurat <code><a href="https://satijalab.org/seurat/reference/FindMarkers.html">FindMarkers()</a></code> function only performs DE tests on a subset of genes that satisfy certain thresholds. The <code>min.pct</code> argument requires a gene to be detected at a minimum percentage in either of the two groups of cells, and by default it is set to 10%. The <code>logfc.threshold</code> limits testing to genes of which the log-fold change between the two groups is above a certain level (0.25 by default). By default the <code><a href="https://satijalab.org/seurat/reference/FindMarkers.html">FindMarkers()</a></code> function performs Wilcoxon Rank Sum tests, but other statistical tests (eg. likelihood-ratio test, <em>t</em>-test) are also available.</p>
 <p>Here we find all markers of cluster 1 as follows.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cluster1.markers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/FindMarkers.html">FindMarkers</a></span><span class="op">(</span><span class="va">N1469</span>, ident.1 <span class="op">=</span> <span class="fl">1</span>, min.pct <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">cluster1.markers</span><span class="op">)</span></code></pre></div>
 <pre><code>##             p_val avg_log2FC pct.1 pct.2 p_val_adj
@@ -282,7 +292,7 @@ UMAP visualization where cells are coloured by cell cluster.
 ## TFF3     0.00e+00       3.46 0.803 0.010  0.00e+00
 ## AGR2    3.05e-304       2.22 0.568 0.007 4.85e-300</code></pre>
 <p>To find all markers distinguishing cluster 2 from clusters 0 and 1, we use the following lines.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cluster2.markers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/FindMarkers.html">FindMarkers</a></span><span class="op">(</span><span class="va">N1469</span>, ident.1 <span class="op">=</span> <span class="fl">2</span>, ident.2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, min.pct <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">cluster2.markers</span><span class="op">)</span></code></pre></div>
 <pre><code>##              p_val avg_log2FC pct.1 pct.2 p_val_adj
@@ -293,10 +303,10 @@ UMAP visualization where cells are coloured by cell cluster.
 ## KRT14     0.00e+00       5.40 0.969 0.057   0.0e+00
 ## SERPINB5 2.57e-292       2.26 0.686 0.032  4.1e-288</code></pre>
 <p>The Seurat <code><a href="https://satijalab.org/seurat/reference/FindAllMarkers.html">FindAllMarkers()</a></code> function automates the marker detection process for all clusters. Here we find markers for every cluster compared to all remaining cells, report only the positive ones.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">N1469.markers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/FindAllMarkers.html">FindAllMarkers</a></span><span class="op">(</span><span class="va">N1469</span>, only.pos <span class="op">=</span> <span class="cn">TRUE</span>, min.pct <span class="op">=</span> <span class="fl">0.25</span>, logfc.threshold <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span></code></pre></div>
 <p>We select the top 3 marker genes for each of cluster and list them below.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">topMarkers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/split.html">split</a></span><span class="op">(</span><span class="va">N1469.markers</span>, <span class="va">N1469.markers</span><span class="op">$</span><span class="va">cluster</span><span class="op">)</span>
 <span class="va">top3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">topMarkers</span>, <span class="va">head</span>, n<span class="op">=</span><span class="fl">3</span><span class="op">)</span>
 <span class="va">top3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span><span class="op">(</span><span class="st">"rbind"</span>, <span class="va">top3</span><span class="op">)</span>
@@ -318,7 +328,7 @@ UMAP visualization where cells are coloured by cell cluster.
 ## 4.CDK1         0       1.48 0.679 0.001         0       4     CDK1
 ## 4.MKI67        0       1.37 0.714 0.000         0       4    MKI67</code></pre>
 <p>The expression level of the top marker genes can be overlaid on the UMAP plots for visualization.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://satijalab.org/seurat/reference/FeaturePlot.html">FeaturePlot</a></span><span class="op">(</span><span class="va">N1469</span>, features <span class="op">=</span> <span class="va">top3</span><span class="op">$</span><span class="va">gene</span>, ncol<span class="op">=</span><span class="fl">3</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="scRNAseqWorkshop_files/figure-html/FeaturePlotMarkers-1.png" alt="Top marker expression visualizations on a UMAP plot." width="1056"><p class="caption">
@@ -326,7 +336,7 @@ Top marker expression visualizations on a UMAP plot.
 </p>
 </div>
 <p>A dot plot can also be produced for visualizing the top marker genes.</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://satijalab.org/seurat/reference/DotPlot.html">DotPlot</a></span><span class="op">(</span><span class="va">N1469</span>, features <span class="op">=</span> <span class="va">top3</span><span class="op">$</span><span class="va">gene</span>, dot.scale <span class="op">=</span> <span class="fl">8</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/SeuratTheme.html">RotatedAxis</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="scRNAseqWorkshop_files/figure-html/DotPlotMarkers-1.png" alt="A dot plot of top marker genes of each cluster." width="768"><p class="caption">
@@ -340,33 +350,33 @@ A dot plot of top marker genes of each cluster.
 <p>Interpreting cell clusters in biological context is one of the most challenging tasks in scRNA-seq data analysis. Prior biological knowledge is often required to do so. Marker genes from the literatures or the curated gene sets (e.g., Gene Ontology, KEGG pathways) are the common sources of prior information. Alternatively, we can use published reference datasets where samples are well annotated with cell type information.</p>
 <p>Here we use a reference bulk RNA-seq dataset of human mammary gland epithelium from the same study <span class="citation">(Pal et al. 2021)</span>. This reference RNA-seq (GSE161892) data consists of a total of 34 samples from basal, luminal progenitor (LP), mature luminal (ML), and stromal cell types. Differential expression analysis of this reference data was performed using limma-voom and TREAT <span class="citation">(Law et al. 2014; McCarthy and Smyth 2009)</span>. Genes were considered cell type-specific if they were upregulated in one cell type vs all other types. This yielded 515, 323, 765, and 1094 signature genes for basal, LP, ML, and stroma, respectively.</p>
 <p>Here we download those signature genes and load them into R.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">url.Signatures</span> <span class="op">&lt;-</span> <span class="st">"https://github.com/SmythLab/scRNAseq-Workshop/raw/main/Data/Human-PosSigGenes.RData"</span>
 <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span><span class="va">url.Signatures</span>, destfile<span class="op">=</span><span class="st">"Data/Human-PosSigGenes.RData"</span>, mode<span class="op">=</span><span class="st">"wb"</span><span class="op">)</span> </code></pre></div>
 <p>We restrict the signature genes to those expressed in the single cell data.</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/load.html">load</a></span><span class="op">(</span><span class="st">"Data/Human-PosSigGenes.RData"</span><span class="op">)</span>
 <span class="va">HumanSig</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>Basal<span class="op">=</span><span class="va">Basal</span>, LP<span class="op">=</span><span class="va">LP</span>, ML<span class="op">=</span><span class="va">ML</span>, Str<span class="op">=</span><span class="va">Str</span><span class="op">)</span>
 <span class="va">HumanSig</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">HumanSig</span>, <span class="va">intersect</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">N1469</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>To associate each cell in the single cell data with the four cell populations in the reference bulk data, we compute the signature scores of the four cell populations for each cell. Here the signature score of a particular cell type is defined as the average expression level of the cell type-specific genes in a given cell.</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">SigScore</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span>
 <span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">HumanSig</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
     <span class="va">SigScore</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html">colMeans</a></span><span class="op">(</span><span class="va">N1469</span><span class="op">@</span><span class="va">assays</span><span class="op">$</span><span class="va">RNA</span><span class="op">@</span><span class="va">data</span><span class="op">[</span><span class="va">HumanSig</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, <span class="op">]</span><span class="op">)</span>
 <span class="op">}</span></code></pre></div>
 <p>We can visualize the signature scores in both UMAP plots and violin plots.</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">SigScores</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span><span class="op">(</span><span class="st">"cbind"</span>, <span class="va">SigScore</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">SigScores</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Basal"</span>, <span class="st">"LP"</span>, <span class="st">"ML"</span>, <span class="st">"Stroma"</span><span class="op">)</span>
 <span class="va">N1469</span><span class="op">@</span><span class="va">meta.data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">N1469</span><span class="op">@</span><span class="va">meta.data</span>, <span class="va">SigScores</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://satijalab.org/seurat/reference/FeaturePlot.html">FeaturePlot</a></span><span class="op">(</span><span class="va">N1469</span>, features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">SigScores</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="scRNAseqWorkshop_files/figure-html/SigScorePlot-1.png" alt="Signature scores." width="960"><p class="caption">
 Signature scores.
 </p>
 </div>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://satijalab.org/seurat/reference/VlnPlot.html">VlnPlot</a></span><span class="op">(</span><span class="va">N1469</span>, features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">SigScores</span><span class="op">)</span>, ncol<span class="op">=</span><span class="fl">2</span>, pt.size<span class="op">=</span><span class="fl">0.1</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="scRNAseqWorkshop_files/figure-html/SigScoreViolinPlot-1.png" alt="Violin plots of signature scores." width="1056"><p class="caption">
@@ -375,12 +385,13 @@ Violin plots of signature scores.
 </div>
 <p>It can be seen that cells in cluster 2 have high expression levels of basal signature genes, suggesting these cells are likely to be basal cells. Likewise, cluster 0 and 4 are LP, cluster 1 is ML and cluster 3 is stroma.</p>
 </div>
-<div id="ternary-plot-analysis" class="section level2">
-<h2 class="hasAnchor">
-<a href="#ternary-plot-analysis" class="anchor"></a>ternary plot analysis</h2>
+</div>
+<div id="ternary-plot-analysis" class="section level1">
+<h1 class="hasAnchor">
+<a href="#ternary-plot-analysis" class="anchor"></a>Ternary plot analysis</h1>
 <p>Another way to visualize the correlation between the single cell and the reference bulk dataset is to make a ternary plot, which is useful for studies concerning three major cell populations. For this data, we are particularly interested in assigning each cell to one of the three major epithelial cell populations (basal, LP and ML).</p>
 <p>We produce a ternary plot to see which of the three populations the cells are closer to. To measure the similarity between each cell and three populations, we count the numbers of expressed signatures (with at least 1 count) in each cell. The position of each cell on the ternary plot is determined by the numbers of expressed gene signatures of the three populations in that cell.</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">TN</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fl">0L</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">N1469</span><span class="op">)</span>, <span class="fl">3L</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">TN</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"LP"</span>, <span class="st">"ML"</span>, <span class="st">"Basal"</span><span class="op">)</span>
 <span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">TN</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
@@ -394,7 +405,7 @@ Violin plots of signature scores.
 ## [4,] 42  33    11
 ## [5,] 14 106    21
 ## [6,] 38  26    17</code></pre>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">vcd</span><span class="op">)</span>
 <span class="va">col.p</span> <span class="op">&lt;-</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/hue_pal.html">hue_pal</a></span><span class="op">(</span><span class="op">)</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nlevels.html">nlevels</a></span><span class="op">(</span><span class="fu"><a href="https://satijalab.org/seurat/reference/Idents.html">Idents</a></span><span class="op">(</span><span class="va">N1469</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/vcd/man/ternaryplot.html">ternaryplot</a></span><span class="op">(</span><span class="va">TN</span>, cex<span class="op">=</span><span class="fl">0.2</span>, pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="va">col.p</span><span class="op">[</span><span class="fu"><a href="https://satijalab.org/seurat/reference/Idents.html">Idents</a></span><span class="op">(</span><span class="va">N1469</span><span class="op">)</span><span class="op">]</span>, grid<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
@@ -403,12 +414,34 @@ Violin plots of signature scores.
 Ternary plot positioning each cell according to the proportion of basal, LP, or ML signature genes expressed by that cell.
 </p>
 </div>
+<p>Alternatively, the relative proportions of expressed signature genes of the cells can be used for the ternary plot analysis.</p>
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">LengthSig</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">HumanSig</span>, <span class="va">length</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"LP"</span>, <span class="st">"ML"</span>, <span class="st">"Basal"</span><span class="op">)</span><span class="op">]</span>
+<span class="va">LengthSig</span></code></pre></div>
+<pre><code>##    LP    ML Basal 
+##   266   643   384</code></pre>
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">TN_prop</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="va">TN</span><span class="op">)</span> <span class="op">/</span> <span class="va">LengthSig</span> <span class="op">)</span> 
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">TN_prop</span><span class="op">)</span></code></pre></div>
+<pre><code>##          LP     ML  Basal
+## [1,] 0.1729 0.0529 0.0417
+## [2,] 0.1466 0.0327 0.0312
+## [3,] 0.1842 0.0653 0.0625
+## [4,] 0.1579 0.0513 0.0286
+## [5,] 0.0526 0.1649 0.0547
+## [6,] 0.1429 0.0404 0.0443</code></pre>
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/vcd/man/ternaryplot.html">ternaryplot</a></span><span class="op">(</span><span class="va">TN_prop</span>, cex<span class="op">=</span><span class="fl">0.2</span>, pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="va">col.p</span><span class="op">[</span><span class="fu"><a href="https://satijalab.org/seurat/reference/Idents.html">Idents</a></span><span class="op">(</span><span class="va">N1469</span><span class="op">)</span><span class="op">]</span>, grid<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<div class="figure" style="text-align: center">
+<img src="scRNAseqWorkshop_files/figure-html/TernaryPlot_prop-1.png" alt="Ternary plot positioning each cell according to the relative proportion of basal, LP, or ML signature genes expressed by that cell." width="528"><p class="caption">
+Ternary plot positioning each cell according to the relative proportion of basal, LP, or ML signature genes expressed by that cell.
+</p>
 </div>
 </div>
 <div id="session-info" class="section level1">
 <h1 class="hasAnchor">
 <a href="#session-info" class="anchor"></a>Session info</h1>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code>## R version 4.1.1 (2021-08-10)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
@@ -489,7 +522,7 @@ McCarthy, Davis J, and Gordon K Smyth. 2009. <span>“Testing Significance Relat
 McInnes, Leland, John Healy, and James Melville. 2018. <span>“Umap: Uniform Manifold Approximation and Projection for Dimension Reduction.”</span> <em>arXiv Preprint arXiv:1802.03426</em>.
 </div>
 <div id="ref-pal2021scrnaseqatlas" class="csl-entry">
-Pal, Bhupinder, Yunshun Chen, François Vaillant, Bianca D. Capaldo, Rachel Joyce, Xiaoyu Song, Vanessa Bryant, et al. 2021. <span>“A Single Cell <span>RNA</span> Atlas of Human Breast Spanning Normal, Preneoplastic and Tumorigenic States.”</span> <em>EMBO Journal</em>, Accepted 17 March 2021.
+Pal, Bhupinder, Yunshun Chen, François Vaillant, Bianca D. Capaldo, Rachel Joyce, Xiaoyu Song, Vanessa Bryant, et al. 2021. <span>“A Single Cell <span>RNA</span> Atlas of Human Breast Spanning Normal, Preneoplastic and Tumorigenic States.”</span> <em>The EMBO Journal</em> 40 (11): e107333.
 </div>
 <div id="ref-satija2015spatial" class="csl-entry">
 Satija, Rahul, Jeffrey A Farrell, David Gennert, Alexander F Schier, and Aviv Regev. 2015. <span>“Spatial Reconstruction of Single-Cell Gene Expression Data.”</span> <em>Nature Biotechnology</em> 33 (5): 495–502.
