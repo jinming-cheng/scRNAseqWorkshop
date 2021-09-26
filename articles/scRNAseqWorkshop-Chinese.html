@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Seurat standard analysis of single cell RNA-seq data • scRNAseqWorkshop</title>
+<title>单细胞转录组数据分析之Seurat标准流程 • scRNAseqWorkshop</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Seurat standard analysis of single cell RNA-seq data">
+<script src="../pkgdown.js"></script><meta property="og:title" content="单细胞转录组数据分析之Seurat标准流程">
 <meta property="og:description" content="scRNAseqWorkshop">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -79,10 +79,10 @@
 
       
 
-      </header><script src="scRNAseqWorkshop_files/header-attrs-2.11/header-attrs.js"></script><div class="row">
+      </header><script src="scRNAseqWorkshop-Chinese_files/header-attrs-2.11/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Seurat standard analysis of single cell RNA-seq data</h1>
+      <h1 data-toc-skip>单细胞转录组数据分析之Seurat标准流程</h1>
                         <h4 class="author">Yunshun Chen</h4>
             <address class="author_afil">
       Walter and Eliza Hall Institute of Medical Research, 1G Royal Parade, Parkville, VIC 3052, Melbourne, Australia<br><a class="author_email" href="mailto:#"></a><a href="mailto:yuchen@wehi.edu.au" class="email">yuchen@wehi.edu.au</a>
@@ -92,41 +92,41 @@
       Walter and Eliza Hall Institute of Medical Research, 1G Royal Parade, Parkville, VIC 3052, Melbourne, Australia<br><a class="author_email" href="mailto:#"></a><a href="mailto:cheng.j@wehi.edu.au" class="email">cheng.j@wehi.edu.au</a>
       </address>
                   
-            <h4 class="date">September 19, 2021</h4>
+            <h4 class="date">September 26, 2021</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/jinming-cheng/scRNAseqWorkshop/blob/master/vignettes/scRNAseqWorkshop.Rmd"><code>vignettes/scRNAseqWorkshop.Rmd</code></a></small>
-      <div class="hidden name"><code>scRNAseqWorkshop.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/jinming-cheng/scRNAseqWorkshop/blob/master/vignettes/scRNAseqWorkshop-Chinese.Rmd"><code>vignettes/scRNAseqWorkshop-Chinese.Rmd</code></a></small>
+      <div class="hidden name"><code>scRNAseqWorkshop-Chinese.Rmd</code></div>
 
     </div>
 
     
     
-<div id="introduction" class="section level1">
+<div id="引言" class="section level1">
 <h1 class="hasAnchor">
-<a href="#introduction" class="anchor"></a>Introduction</h1>
-<p>Single-cell RNA sequencing (scRNA-seq) has become a widely used technique that allows researchers to profile the gene expression and study molecular biology at the cellular level. It provides biological resolution that cannot be achieved with conventional bulk RNA-seq experiments on cell populations.</p>
-<p>Here, we provide a detailed workflow for analyzing the 10X single cell RNA-seq data from a single cell RNA expression atlas of human breast tissue <span class="citation">(Pal et al. 2021)</span>. This cell atlas explores the cellular heterogeneity of human mammary gland across different states including normal, pre-neoplastic and cancerous states.</p>
-<p>We will be using part of this cell atlas data to demonstrate how to perform a standard analysis for examining one single cell sample. Most of the analysis will be performed using the <em>Seurat</em> package <span class="citation">(Satija et al. 2015)</span>.</p>
+<a href="#%E5%BC%95%E8%A8%80" class="anchor"></a>引言</h1>
+<p>单细胞RNA测序 (scRNA-seq)已经成为了被广泛使用的技术，能够让研究人员在单细胞水平测得基因表达图谱和研究分子生物学机制。 它提供了传统bulk RNA实验无法实现的细胞群体的生物学分辨率。.</p>
+<p>这里, 我们提供了一套详细的工作流程，用于分析来自于人类乳腺组织单细胞RNA表达图谱<span class="citation">(Pal et al. 2021)</span>的10X单细胞RNA-seq数据。 这个细胞图谱探究了不同状态下人类乳腺组织的细胞异质性，包括正常, 癌前和癌变状态。</p>
+<p>我们将会使用这套细胞图谱数据的一部分来展示如何对一个单细胞样本进行标准分析。 大部分的分析将会使用 <em>Seurat</em> <span class="citation">(Satija et al. 2015)</span> 包来完成。</p>
 </div>
-<div id="preliminary" class="section level1">
+<div id="初步准备" class="section level1">
 <h1 class="hasAnchor">
-<a href="#preliminary" class="anchor"></a>Preliminary</h1>
-<div id="pre-processing-the-raw-data" class="section level2">
+<a href="#%E5%88%9D%E6%AD%A5%E5%87%86%E5%A4%87" class="anchor"></a>初步准备</h1>
+<div id="原始数据预处理" class="section level2">
 <h2 class="hasAnchor">
-<a href="#pre-processing-the-raw-data" class="anchor"></a>Pre-processing the raw data</h2>
-<p>The raw 10X data come in BCL format. They need to be pre-processed by software tools such as <em>cellranger</em>.</p>
-<p>We use <em>cellranger</em> to convert BCL files into the FASTQ files, then align the reads to the human genome, and finally quantify the UMI counts for each gene in each cell. The entire analysis in this workflow is conducted within the R environment using the outputs from <em>cellranger</em>. We do not cover the details of running <em>cellranger</em> as they are beyond the scope of this workflow. The information of how to run <em>cellranger</em> is available at <a href="https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/what-is-cell-ranger">here</a>.</p>
+<a href="#%E5%8E%9F%E5%A7%8B%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86" class="anchor"></a>原始数据预处理</h2>
+<p>原始10X数据是BCL格式。 它们需要被软件工具提前处理比如 <em>cellranger</em>。</p>
+<p>我们先用 <em>cellranger</em> 将BCL文件转换成FASTQ文件, 然后再将reads比对到人类基因组, 最后定量每个细胞中的每个基因的UMI counts。 这个工作流程使用的是 <em>cellranger</em> 的输出文件，并且所有分析过程都是在R环境中进行，。 我们没有包括 <em>cellranger</em> 运行的详细过程, 因为这不在此工作流程的范围之内。 关于运行 <em>cellranger</em> 的详细信息可以在<a href="https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/what-is-cell-ranger">这里</a>获得。</p>
 </div>
-<div id="downloading-the-read-counts" class="section level2">
+<div id="下载read-counts" class="section level2">
 <h2 class="hasAnchor">
-<a href="#downloading-the-read-counts" class="anchor"></a>Downloading the read counts</h2>
-<p>In this workshop, we will use one sample from this published study <span class="citation">(Pal et al. 2021)</span>. This sample correspond to one patient with the following ID: N1469, and the accession number of the sample is GSM4909258.</p>
-<p>We first create a <code>Data</code> folder under the current working directory. Then we make a subfolder with the patient ID as the folder name under the <code>Data</code> folder.</p>
+<a href="#%E4%B8%8B%E8%BD%BDread-counts" class="anchor"></a>下载read counts</h2>
+<p>在本次workshop中，我们会用到这个已发表的研究<span class="citation">(Pal et al. 2021)</span>中的一个样本。 该样本对应的病人ID如下：N1469， 其GEO登记号是GSM4909258。</p>
+<p>我们先在当前工作目录下创建一个叫 <code>Data</code> 的文件夹。 然后我们在 <code>Data</code> 文件夹下面用病人的ID名创建一个子文件夹。</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">OneSample</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"N1469"</span><span class="op">)</span>
 <span class="va">out_dir</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="st">"Data"</span>, <span class="va">OneSample</span><span class="op">)</span>
 <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.exists</a></span><span class="op">(</span><span class="va">out_dir</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span><span class="va">out_dir</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
-<p>The cellranger output consists of three data files: a count matrix in <em>mtx.gz</em> format, barcode information in <em>tsv.gz</em> format, and feature information in <em>tsv.gz</em>. We download the three data files of this sample from GEO and store them in the subfolder.</p>
+<p>cellranger的输出结果包含三个数据文件：一个 <em>mtx.gz</em> 格式的count矩阵文件，一个 <em>tsv.gz</em> 格式的barcode信息文件，和一个 <em>tsv.gz</em> 格式的feature信息文件。 我们从GEO下载了这个样本的三个数据文件，并将它们放在子文件夹中。</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">GSM</span> <span class="op">&lt;-</span> <span class="st">"https://ftp.ncbi.nlm.nih.gov/geo/samples/GSM4909nnn/"</span>
 <span class="va">url.matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">GSM</span>,
@@ -139,29 +139,29 @@
 <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span><span class="va">url.features</span>, destfile<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"Data/"</span>, <span class="va">OneSample</span>, <span class="st">"/features.tsv.gz"</span><span class="op">)</span>, mode<span class="op">=</span><span class="st">"wb"</span><span class="op">)</span> </code></pre></div>
 </div>
 </div>
-<div id="standard-analysis" class="section level1">
+<div id="标准分析" class="section level1">
 <h1 class="hasAnchor">
-<a href="#standard-analysis" class="anchor"></a>Standard analysis</h1>
-<div id="read-in-the-data" class="section level2">
+<a href="#%E6%A0%87%E5%87%86%E5%88%86%E6%9E%90" class="anchor"></a>标准分析</h1>
+<div id="读入数据" class="section level2">
 <h2 class="hasAnchor">
-<a href="#read-in-the-data" class="anchor"></a>Read in the data</h2>
-<p>We load the Seurt package and read in the 10X data for Patient N1469. The object <code>N1469.data</code> is a sparse matrix containing the raw count data of Patient N1469. Rows are features (genes) and columns are cells. By default, the column names of the data are the cell barcodes.</p>
+<a href="#%E8%AF%BB%E5%85%A5%E6%95%B0%E6%8D%AE" class="anchor"></a>读入数据</h2>
+<p>我们加载了Seurat包，并且读取了病人N1469的10X数据. <code>N1469.data</code>对象是一个包含病人N1469的原始count数据的稀疏矩阵。 行是特征（基因），列是细胞。 默认情况下, 数据的列名是细胞barcode。</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://satijalab.org/seurat">Seurat</a></span><span class="op">)</span>
 <span class="va">N1469.data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/Read10X.html">Read10X</a></span><span class="op">(</span>data.dir <span class="op">=</span> <span class="st">"Data/N1469"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">N1469.data</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"N1469"</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">N1469.data</span><span class="op">)</span>, sep<span class="op">=</span><span class="st">"_"</span><span class="op">)</span></code></pre></div>
-<p>We then create a Seurat object <code>N1469</code>. Genes expressed in less than 3 cells are removed. Cells with at least 200 detected genes are kept in the analysis.</p>
+<p>然后我们创建了一个名为<code>N1469</code>的Seurat对象。 在少于3个细胞中表达的基因被去除了。 细胞至少有200个基因被检测到才会被保留下来。</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">N1469</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/CreateSeuratObject.html">CreateSeuratObject</a></span><span class="op">(</span>counts<span class="op">=</span><span class="va">N1469.data</span>, project<span class="op">=</span><span class="st">"N1469"</span>, min.cells<span class="op">=</span><span class="fl">3</span>, min.features<span class="op">=</span><span class="fl">200</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="quality-control" class="section level2">
+<div id="质量控制" class="section level2">
 <h2 class="hasAnchor">
-<a href="#quality-control" class="anchor"></a>Quality control</h2>
-<p>Quality control is essential for scRNA-seq analysis. Cells of low quality and genes of low expression shall be removed prior to the analysis.</p>
-<p>Two common measures of cell quality are the library size and the number of expressed genes in each cell. The number of unique genes and total molecules (library size) are automatically calculated during <code><a href="https://satijalab.org/seurat/reference/CreateSeuratObject.html">CreateSeuratObject()</a></code>. Another measure to look at is the proportion of reads from mitochondrial genes in each cell. Cells with higher mitochondrial content are more prone to die, hence, they should also be removed from the analysis <span class="citation">(Ilicic et al. 2016)</span>. Here, we calculate the percentages of reads from mitochondrial genes and store them in the metadata of the Seurat object. We use the set of all genes starting with MT- as a set of mitochondrial genes.</p>
+<a href="#%E8%B4%A8%E9%87%8F%E6%8E%A7%E5%88%B6" class="anchor"></a>质量控制</h2>
+<p>质量控制是单细胞测序分析的基本步骤。 低质量的细胞和低表达的基因应该在分析之前去除。</p>
+<p>两种常用的评估细胞质量的方法是看每个细胞的文库大小（library size）和表达的基因数目。 在使用 <code><a href="https://satijalab.org/seurat/reference/CreateSeuratObject.html">CreateSeuratObject()</a></code>创建Seurat对象时，基因数目和总的分子数(library size) 会被自动计算。 另一种评估方法是看每个细胞中来自于线粒体基因的reads比例。 具有高线粒体reads含量的细胞更倾向于死亡，因此，它们应该在分析之前被去掉<span class="citation">(Ilicic et al. 2016)</span>。 这里，我们计算了来自线粒体基因的reads的百分比，并将其保存在Seurat对象的metadata中。 我们把“MT-”开头所有基因当作一个线粒体基因集。</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">N1469</span><span class="op">[[</span><span class="st">"percent.mt"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/PercentageFeatureSet.html">PercentageFeatureSet</a></span><span class="op">(</span><span class="va">N1469</span>, pattern <span class="op">=</span> <span class="st">"^MT-"</span><span class="op">)</span></code></pre></div>
-<p>The QC metrics of a Seurat object can be viewed as follows.</p>
+<p>一个Seurat对象的QC指标可以通过如下方式查看。</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">N1469</span><span class="op">@</span><span class="va">meta.data</span><span class="op">)</span></code></pre></div>
 <pre><code>##                        orig.ident nCount_RNA nFeature_RNA percent.mt
@@ -171,67 +171,67 @@
 ## N1469_AAACCGTGCAGTTG-1      N1469        765          328      38.17
 ## N1469_AAACCGTGCATGAC-1      N1469       3908         1294       5.12
 ## N1469_AAACGCACTCAGGT-1      N1469       7218         2102       2.13</code></pre>
-<p>Scatter plots can be produced for visualizing some of the QC metrics.</p>
+<p>可以通过画散点图来可视化一些QC指标。</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">plot1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/FeatureScatter.html">FeatureScatter</a></span><span class="op">(</span><span class="va">N1469</span>, feature1 <span class="op">=</span> <span class="st">"nCount_RNA"</span>, feature2 <span class="op">=</span> <span class="st">"percent.mt"</span>, plot.cor<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>
 <span class="va">plot2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/FeatureScatter.html">FeatureScatter</a></span><span class="op">(</span><span class="va">N1469</span>, feature1 <span class="op">=</span> <span class="st">"nCount_RNA"</span>, feature2 <span class="op">=</span> <span class="st">"nFeature_RNA"</span>, plot.cor<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>
 <span class="va">plot1</span> <span class="op">+</span> <span class="va">plot2</span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="scRNAseqWorkshop_files/figure-html/QC_Scatter_plot-1.png" alt="Scatter plots of QC metrics." width="864"><p class="caption">
-Scatter plots of QC metrics.
+<img src="scRNAseqWorkshop-Chinese_files/figure-html/QC_Scatter_plot-1.png" alt="QC指标的散点图" width="864"><p class="caption">
+QC指标的散点图
 </p>
 </div>
-<p>For this particular data, we filter cells that have unique features less than 500 and with &gt;20% mitochondrial counts.</p>
+<p>对这套特定数据而言，我们过滤掉了那些唯一特征（基因）小于500并且线粒体counts比例大于20% 的细胞。</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">N1469</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span><span class="op">(</span><span class="va">N1469</span>, subset <span class="op">=</span> <span class="va">nFeature_RNA</span> <span class="op">&gt;</span> <span class="fl">500</span> <span class="op">&amp;</span> <span class="va">percent.mt</span> <span class="op">&lt;</span> <span class="fl">20</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="normalization" class="section level2">
+<div id="标准化" class="section level2">
 <h2 class="hasAnchor">
-<a href="#normalization" class="anchor"></a>Normalization</h2>
-<p>After cell filtering, the next step is normalization. Normalization is useful for removing cell-specific biases.</p>
-<p>Here, we perform the default normalization method in Seurat, which divides gene counts by the total counts for each cell, multiplies this by a scale factor of 10,000, and then log-transforms the result.</p>
+<a href="#%E6%A0%87%E5%87%86%E5%8C%96" class="anchor"></a>标准化</h2>
+<p>在过滤细胞之后，接下来的一步是标准化。 标准化在去除细胞特异偏好上很有用。</p>
+<p>这里，我们使用了Seurat中默认的标准化方法，其先用每个细胞中的基因counts数除以总的counts数，再乘以一个缩放因子10000，最后对结果取对数。</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">N1469</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/NormalizeData.html">NormalizeData</a></span><span class="op">(</span><span class="va">N1469</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="highly-variable-genes" class="section level2">
+<div id="高度变化基因" class="section level2">
 <h2 class="hasAnchor">
-<a href="#highly-variable-genes" class="anchor"></a>Highly variable genes</h2>
-<p>Single cell RNA-seq data are often used for exploring heterogeneity within cell population. To reduce the computational complexity of downstream calculations and also to focus on the true biological signal, a subset of highly variable genes (HVGs) is often selected prior to downstream analyses. One of the most commonly used strategies is to take the top genes with the highest variances across all the cells. The choice of the number of HVGs is fairly arbitrary, with any value from 500 to 5000 considered reasonable.</p>
-<p>For this data, we select top 1500 HVGs to be used in downstream analyses such as PCA and UMAP visualization.</p>
+<a href="#%E9%AB%98%E5%BA%A6%E5%8F%98%E5%8C%96%E5%9F%BA%E5%9B%A0" class="anchor"></a>高度变化基因</h2>
+<p>单细胞RNA-seq数据经常被用来探究细胞群体之间的异质性。 为了减少下游分析的计算复杂度并且专注于真实的生物信号，在进行下游分析之前，经常会挑选一个高度变化基因（HVG）子集。 最常用的策略之一是选择那些在所有细胞中具有最高方差的基因。 高度变化基因的数目选择是相当随意的，任何在500到5000之间的数值都被认为是合理的。</p>
+<p>对于这套数据，我们选择了最高度变化的1500个基因用于下游分析，比如PCA和UMAP可视化。</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">N1469</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/FindVariableFeatures.html">FindVariableFeatures</a></span><span class="op">(</span><span class="va">N1469</span>, selection.method<span class="op">=</span><span class="st">"vst"</span>, nfeatures<span class="op">=</span><span class="fl">1500</span><span class="op">)</span></code></pre></div>
-<p>A mean-variance plot can be produced for visualizing the top variable genes.</p>
+<p>均值-方差图可以被用来可视化变化最大的基因。</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">top50</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu"><a href="https://satijalab.org/seurat/reference/VariableFeatures.html">VariableFeatures</a></span><span class="op">(</span><span class="va">N1469</span><span class="op">)</span>, <span class="fl">50</span><span class="op">)</span>
 <span class="va">plot1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/VariableFeaturePlot.html">VariableFeaturePlot</a></span><span class="op">(</span><span class="va">N1469</span><span class="op">)</span>
 <span class="va">plot2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/LabelPoints.html">LabelPoints</a></span><span class="op">(</span>plot<span class="op">=</span><span class="va">plot1</span>, points<span class="op">=</span><span class="va">top50</span>, repel<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
 <span class="va">plot2</span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="scRNAseqWorkshop_files/figure-html/HVG_plot-1.png" alt="A mean-variance plot where top 1500 HVGs are highlighted in red and top 50 HVGs are labelled." width="672"><p class="caption">
-A mean-variance plot where top 1500 HVGs are highlighted in red and top 50 HVGs are labelled.
+<img src="scRNAseqWorkshop-Chinese_files/figure-html/HVG_plot-1.png" alt="均值-方差图，最高度变化的1500个基因用红色高亮，最高度变化的50个基因被标记出来" width="672"><p class="caption">
+均值-方差图，最高度变化的1500个基因用红色高亮，最高度变化的50个基因被标记出来
 </p>
 </div>
-<p>Before proceeding to dimension reduction, we apply a linear transformation to “scale” the data. This data scaling is performed by the <code><a href="https://satijalab.org/seurat/reference/ScaleData.html">ScaleData()</a></code> function, which standardizes the expression of each gene to have a mean expression of 0 and a variance of 1 across all the cells. This step gives equal weight to the genes used in downstream analyses so that highly-expressed genes do not dominate.</p>
-<p>By default, the scaling process is only applied to the previously identified 1500 HVGs as these HVGs are used for the downstream analyses.</p>
+<p>在进行降维之前，我们使用了线性转化来缩放（scale）数据。 这种数据缩放是通过<code><a href="https://satijalab.org/seurat/reference/ScaleData.html">ScaleData()</a></code>函数来完成，其标准化了每个基因的表达，使表达量在所有细胞中的均值为0，标准差为1。 这一步赋予了用于下游分析的基因相同的权重，所以高表达的基因不会占据主导。</p>
+<p>默认情况下，缩放过程只会被应用于之前找到的1500个高度变化基因，因为这些基因被用在了下游分析中。</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">N1469</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/ScaleData.html">ScaleData</a></span><span class="op">(</span><span class="va">N1469</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="dimension-reduction" class="section level2">
+<div id="降维" class="section level2">
 <h2 class="hasAnchor">
-<a href="#dimension-reduction" class="anchor"></a>Dimension reduction</h2>
-<p>Dimension reduction is an essential step in single cell analysis. It summarizes the variances of thousands of genes in a much lower numbers of dimensions, hence reduces computational work in downstream analyses. A simple, highly effective and widely used approach for linear dimension reduction is principal components analysis (PCA). The top PCs would capture the dominant factors of heterogeneity in the data set.</p>
-<p>Here, we perform PCA on the scaled data. By default, only the previously determined 1500 HVGs are used and the first 50 PCs are computed and returned. The PCA results can be visualized in a PCA plot.</p>
+<a href="#%E9%99%8D%E7%BB%B4" class="anchor"></a>降维</h2>
+<p>降维是单细胞分析中的一个基本步骤。 它在一个相对较低的维度概括了上千个基因的方差，因此减少了下游分析的计算工作。 一个简单、高度有效和广泛使用的线性降维方法是主成分分析（PCA）。 最高的PCs将会捕捉数据集中占主导地位的异质性因子。</p>
+<p>这里，我们将PCA用于缩放后的数据。 默认情况下，只有之前找到的1500个高度变化基因会被使用，并且前50个主成分会被计算和返回。 PCA结果可以通过PCA图来可视化。</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">N1469</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/RunPCA.html">RunPCA</a></span><span class="op">(</span><span class="va">N1469</span>, features<span class="op">=</span><span class="fu"><a href="https://satijalab.org/seurat/reference/VariableFeatures.html">VariableFeatures</a></span><span class="op">(</span><span class="va">N1469</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">N1469</span>, reduction <span class="op">=</span> <span class="st">"pca"</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="scRNAseqWorkshop_files/figure-html/PCA-1.png" alt="PCA plot showing the first two principal components of the data." width="672"><p class="caption">
-PCA plot showing the first two principal components of the data.
+<img src="scRNAseqWorkshop-Chinese_files/figure-html/PCA-1.png" alt="PCA图展示数据的前两个主成分" width="672"><p class="caption">
+PCA图展示数据的前两个主成分
 </p>
 </div>
-<p>Although PCA greatly reduces the dimension of the data from thousands of genes to 50 PCs, it is still difficult to visualize and interpret the 50 PCs at the same time. Therefore, further dimension reduction strategies are required to compress the data into 2-3 dimensions for a more intuitive understanding of the data. The two popular non-linear dimension reduction techniques are <em>t</em>-stochastic neighbor embedding (tSNE) <span class="citation">(Van der Maaten and Hinton 2008)</span> and uniform manifold approximation and projection (UMAP) <span class="citation">(McInnes, Healy, and Melville 2018)</span>.</p>
-<p>It is debatable whether the UMAP or tSNE visualization is better. UMAP tends to have more compact visual clusters but reduces resolution within each cluster. The main reason that UMAP has an increasing popularity is that UMAP is much faster than tSNE. Note that both UMAP and tSNE involve a series of randomization steps so setting the seed is critical.</p>
-<p>Here we perform both UMAP and tSNE for dimension reduction and visualization. The top 30 PCs are used as input and a random seed is used for reproducibility.</p>
+<p>虽然PCA很大程度上减少了数据的维度，从几千个基因到50个PCs，但是同时可视化和解释50PCs依然很困难。 因此，为了更直观的理解数据，需要进一步的降维策略来将数据压缩到2-3维度。 两种流行的非线性降维技术是 <em>t</em>-stochastic neighbor embedding (tSNE) <span class="citation">(Van der Maaten and Hinton 2008)</span> 和 uniform manifold approximation and projection (UMAP) <span class="citation">(McInnes, Healy, and Melville 2018)</span>。</p>
+<p>UMAP和tSNE可视化方法哪个更好是有争议。 UMAP倾向于具有更紧凑的可视化集群，但是减少了每个集群内的分辨率。 UMAP越来越少欢迎的主要原因是它比tSNE更快。 注意UMAP和tSNE都包括一些列随机步骤，所以设置seed是很关键的。</p>
+<p>这里我们同时使用了UMAP和tSNE来进行数据降维和可视化。 前30个PC被用作输入数据，并且一个随机seed被使用以重现此结果。</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">dimUsed</span> <span class="op">&lt;-</span> <span class="fl">30</span>
 <span class="va">N1469</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/RunUMAP.html">RunUMAP</a></span><span class="op">(</span><span class="va">N1469</span>, dims<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="va">dimUsed</span>, seed.use<span class="op">=</span><span class="fl">2021</span>, verbose<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>
@@ -240,17 +240,17 @@ PCA plot showing the first two principal components of the data.
 <span class="va">plot2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">N1469</span>, reduction <span class="op">=</span> <span class="st">"tsne"</span><span class="op">)</span>
 <span class="va">plot1</span> <span class="op">+</span> <span class="va">plot2</span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="scRNAseqWorkshop_files/figure-html/DR_plot-1.png" alt="UMAP and t-SNE visualization" width="864"><p class="caption">
+<img src="scRNAseqWorkshop-Chinese_files/figure-html/DR_plot-1.png" alt="UMAP and t-SNE visualization" width="864"><p class="caption">
 UMAP and t-SNE visualization
 </p>
 </div>
 </div>
-<div id="cell-clustering" class="section level2">
+<div id="细胞聚类" class="section level2">
 <h2 class="hasAnchor">
-<a href="#cell-clustering" class="anchor"></a>Cell clustering</h2>
-<p>Cell clustering is a procedure in scRNA-seq data analysis to group cells with similar expression profiles. It is an important step for summarizing information and providing biological interpretation of the data. Seurat offers a graph-based clustering approach, which is one of the most popular clustering algorithms due to its flexibilty and scalability for large scRNA-seq datasets.</p>
-<p>One of the most commonly asked questions in cell clustering is “how many cell clusters are there in the data?” This question is often hard to answer since we can define as many clusters as we want. In fact, the number of clusters would depend on the biological questions of interest (eg. whether resolution of the major cell types will be sufficient or resolution of subtypes is required). In practice, we often experiment with different resolution in data exploration to obtain the “optimal” resolution that provides the best answer to the questions of our interest.</p>
-<p>In Seurat, the cell clustering procedure starts by constructing a KNN graph using the <code><a href="https://satijalab.org/seurat/reference/FindNeighbors.html">FindNeighbors()</a></code> function. Here, we use the top 30 PCs as input. Then the Seurat <code><a href="https://satijalab.org/seurat/reference/FindClusters.html">FindClusters()</a></code> function applies the Louvain algorithm (by default) to group cells together. For this particular data, we set the resolution parameter to 0.1. The final clusters can be found using the <code><a href="https://satijalab.org/seurat/reference/Idents.html">Idents()</a></code> function.</p>
+<a href="#%E7%BB%86%E8%83%9E%E8%81%9A%E7%B1%BB" class="anchor"></a>细胞聚类</h2>
+<p>细胞聚类是单细胞RNA-seq数据分析中将具有相似表达谱的细胞聚在一起的步骤。 这是总结数据的信息和提供数据的生物学解释的一个重要步骤。 Seurat提供了一个基于图的聚类方法，因其灵活性和可扩展性使它成为最流行的聚类方法之一。</p>
+<p>在细胞聚类中经常会被问到的问题是：“在数据中应该有多少个cluster？” 这个问题经常很难回答，因为我们可以定义我们想要的cluster的数目。 实际上，cluster的数目将依赖于我们感兴趣的生物学问题（比如，主要细胞类型的分辨率是否足够或者亚型的分辨率是否需要）。 实践中，我们经常会尝试不同的分辨率来探究数据以获得“最佳”的分辨率来给出我们感兴趣问题的最佳解答。</p>
+<p>在Seurat中，细胞聚类过程从构建一个KNN图开始，使用<code><a href="https://satijalab.org/seurat/reference/FindNeighbors.html">FindNeighbors()</a></code>函数。 这里，我们用了前30PCs做为输入数据。 然后Seurat中的<code><a href="https://satijalab.org/seurat/reference/FindClusters.html">FindClusters()</a></code>函数会用Louvain算法（默认）将细胞聚在一起。 对于这套特定数据，我们设置的分辨率参数是0.1。 最终的cluster可以通过<code><a href="https://satijalab.org/seurat/reference/Idents.html">Idents()</a></code>函数找到。</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">N1469</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/FindNeighbors.html">FindNeighbors</a></span><span class="op">(</span><span class="va">N1469</span>, dims<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="va">dimUsed</span><span class="op">)</span>
 <span class="va">N1469</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/FindClusters.html">FindClusters</a></span><span class="op">(</span><span class="va">N1469</span>, resolution<span class="op">=</span><span class="fl">0.1</span><span class="op">)</span></code></pre></div>
@@ -268,7 +268,7 @@ UMAP and t-SNE visualization
 <pre><code>## 
 ##    0    1    2    3    4 
 ## 1699  507  421  213   28</code></pre>
-<p>We can also obtain the final clusters from the metadata.</p>
+<p>我们也可以从metadata中获得最终的cluster信息。</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">N1469</span><span class="op">@</span><span class="va">meta.data</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] "orig.ident"      "nCount_RNA"      "nFeature_RNA"    "percent.mt"     
@@ -278,21 +278,21 @@ UMAP and t-SNE visualization
 <pre><code>## 
 ##    0    1    2    3    4 
 ## 1699  507  421  213   28</code></pre>
-<p>We can visualize the cell clusters in a UMAP plot.</p>
+<p>我们可以用UMAP图来可视化细胞clusters。</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://satijalab.org/seurat/reference/DimPlot.html">DimPlot</a></span><span class="op">(</span><span class="va">N1469</span>, reduction <span class="op">=</span> <span class="st">"umap"</span>, label <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="scRNAseqWorkshop_files/figure-html/UMAP-1.png" alt="UMAP visualization where cells are coloured by cell cluster." width="720"><p class="caption">
-UMAP visualization where cells are coloured by cell cluster.
+<img src="scRNAseqWorkshop-Chinese_files/figure-html/UMAP-1.png" alt="UMAP可视化图，细胞按细胞cluster着色" width="720"><p class="caption">
+UMAP可视化图，细胞按细胞cluster着色
 </p>
 </div>
 </div>
-<div id="marker-genes-identification" class="section level2">
+<div id="标记基因鉴定" class="section level2">
 <h2 class="hasAnchor">
-<a href="#marker-genes-identification" class="anchor"></a>Marker genes identification</h2>
-<p>The next step after cell clustering is to identify marker genes that drive separation between the cell clusters. Marker genes are usually obtained by performing differential expression analyses between different clusters. In Seurat, the differential expression analysis is performed by the <code><a href="https://satijalab.org/seurat/reference/FindMarkers.html">FindMarkers()</a></code> function. By default, it identifies positive and negative markers of a single cluster (specified in <code>ident.1</code>), compared to all other cells.</p>
-<p>To increase the computational speed, the Seurat <code><a href="https://satijalab.org/seurat/reference/FindMarkers.html">FindMarkers()</a></code> function only performs DE tests on a subset of genes that satisfy certain thresholds. The <code>min.pct</code> argument requires a gene to be detected at a minimum percentage in either of the two groups of cells, and by default it is set to 10%. The <code>logfc.threshold</code> limits testing to genes of which the log-fold change between the two groups is above a certain level (0.25 by default). By default the <code><a href="https://satijalab.org/seurat/reference/FindMarkers.html">FindMarkers()</a></code> function performs Wilcoxon Rank Sum tests, but other statistical tests (eg. likelihood-ratio test, <em>t</em>-test) are also available.</p>
-<p>Here we find all markers of cluster 1 as follows.</p>
+<a href="#%E6%A0%87%E8%AE%B0%E5%9F%BA%E5%9B%A0%E9%89%B4%E5%AE%9A" class="anchor"></a>标记基因鉴定</h2>
+<p>细胞聚类的下一步是鉴定驱使细胞clusters分离的标记基因。 标记基因的获取通常是通过进行不同cluster之间的差异表达分析。 在Seurat中，差异表达分析由<code><a href="https://satijalab.org/seurat/reference/FindMarkers.html">FindMarkers()</a></code> 函数来完成。 默认情况下，它会比较单个cluster（由<code>ident.1</code>指定）和剩下的其他所有clusters，来鉴定该cluster的阳性和阴性标记基因。</p>
+<p>为了增加计算速度，Seurat中的<code><a href="https://satijalab.org/seurat/reference/FindMarkers.html">FindMarkers()</a></code>函数只对一些满足特定阈值的基因子集进行DE检验。 参数<code>min.pct</code>要求基因在两组细胞中被检测到的百分比要超过一个阈值，这个阈值默认情况下是10%。 参数<code>logfc.threshold</code>限制被检测的基因在两组细胞中的log-fold change要高于一个特定水平（默认是0.25）。 默认情况下，<code><a href="https://satijalab.org/seurat/reference/FindMarkers.html">FindMarkers()</a></code> 函数会使用Wilcoxon Rank Sum检验，但是其他的统计检验方法（比如， likelihood-ratio检验, <em>t</em>-检验) 也是可以使用的。</p>
+<p>这里我们找到了cluster 1的所有标记基因。</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cluster1.markers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/FindMarkers.html">FindMarkers</a></span><span class="op">(</span><span class="va">N1469</span>, ident.1 <span class="op">=</span> <span class="fl">1</span>, min.pct <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">cluster1.markers</span><span class="op">)</span></code></pre></div>
@@ -303,7 +303,7 @@ UMAP visualization where cells are coloured by cell cluster.
 ## BATF     0.00e+00       2.15 0.684 0.034  0.00e+00
 ## TFF3     0.00e+00       3.46 0.803 0.010  0.00e+00
 ## AGR2    3.05e-304       2.22 0.568 0.007 4.85e-300</code></pre>
-<p>To find all markers distinguishing cluster 2 from clusters 0 and 1, we use the following lines.</p>
+<p>为了找到将cluster2区别于cluster 0和1的标记基因，我们可以用如下方法。</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cluster2.markers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/FindMarkers.html">FindMarkers</a></span><span class="op">(</span><span class="va">N1469</span>, ident.1 <span class="op">=</span> <span class="fl">2</span>, ident.2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, min.pct <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">cluster2.markers</span><span class="op">)</span></code></pre></div>
@@ -314,10 +314,10 @@ UMAP visualization where cells are coloured by cell cluster.
 ## KRT5      0.00e+00       3.79 0.929 0.138   0.0e+00
 ## KRT14     0.00e+00       5.40 0.969 0.057   0.0e+00
 ## SERPINB5 2.57e-292       2.26 0.686 0.032  4.1e-288</code></pre>
-<p>The Seurat <code><a href="https://satijalab.org/seurat/reference/FindAllMarkers.html">FindAllMarkers()</a></code> function automates the marker detection process for all clusters. Here we find markers for every cluster compared to all remaining cells, report only the positive ones.</p>
+<p>Seurat中的<code><a href="https://satijalab.org/seurat/reference/FindAllMarkers.html">FindAllMarkers()</a></code>函数会自动化所有clusters的标记基因检测过程。 这里我们找到了每个cluster的标记基因，通过将该cluster的细胞与剩下所有细胞进行比较后得到，只报告阳性标记基因。</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">N1469.markers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/FindAllMarkers.html">FindAllMarkers</a></span><span class="op">(</span><span class="va">N1469</span>, only.pos <span class="op">=</span> <span class="cn">TRUE</span>, min.pct <span class="op">=</span> <span class="fl">0.25</span>, logfc.threshold <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span></code></pre></div>
-<p>We select the top 3 marker genes for each of cluster and list them below.</p>
+<p>我们选择每个cluster的最显著的3个标记基因，并将它们列在下方。</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">topMarkers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/split.html">split</a></span><span class="op">(</span><span class="va">N1469.markers</span>, <span class="va">N1469.markers</span><span class="op">$</span><span class="va">cluster</span><span class="op">)</span>
 <span class="va">top3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">topMarkers</span>, <span class="va">head</span>, n<span class="op">=</span><span class="fl">3</span><span class="op">)</span>
@@ -339,44 +339,44 @@ UMAP visualization where cells are coloured by cell cluster.
 ## 4.UBE2C        0       2.71 1.000 0.006         0       4    UBE2C
 ## 4.CDK1         0       1.48 0.679 0.001         0       4     CDK1
 ## 4.MKI67        0       1.37 0.714 0.000         0       4    MKI67</code></pre>
-<p>The expression level of the top marker genes can be overlaid on the UMAP plots for visualization.</p>
+<p>最显著标记基因的表达水平可以被覆盖到UMAP图上来进行可视化。</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://satijalab.org/seurat/reference/FeaturePlot.html">FeaturePlot</a></span><span class="op">(</span><span class="va">N1469</span>, features <span class="op">=</span> <span class="va">top3</span><span class="op">$</span><span class="va">gene</span>, ncol<span class="op">=</span><span class="fl">3</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="scRNAseqWorkshop_files/figure-html/FeaturePlotMarkers-1.png" alt="Top marker expression visualizations on a UMAP plot." width="1056"><p class="caption">
-Top marker expression visualizations on a UMAP plot.
+<img src="scRNAseqWorkshop-Chinese_files/figure-html/FeaturePlotMarkers-1.png" alt="最显著标记基因表达的UMAP图可视化" width="1056"><p class="caption">
+最显著标记基因表达的UMAP图可视化
 </p>
 </div>
-<p>A dot plot can also be produced for visualizing the top marker genes.</p>
+<p>点图也可以用来可视化最显著的标记基因。</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://satijalab.org/seurat/reference/DotPlot.html">DotPlot</a></span><span class="op">(</span><span class="va">N1469</span>, features <span class="op">=</span> <span class="va">top3</span><span class="op">$</span><span class="va">gene</span>, dot.scale <span class="op">=</span> <span class="fl">8</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/SeuratTheme.html">RotatedAxis</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="scRNAseqWorkshop_files/figure-html/DotPlotMarkers-1.png" alt="A dot plot of top marker genes of each cluster." width="768"><p class="caption">
-A dot plot of top marker genes of each cluster.
+<img src="scRNAseqWorkshop-Chinese_files/figure-html/DotPlotMarkers-1.png" alt="每个cluster的最显著基因的点图" width="768"><p class="caption">
+每个cluster的最显著基因的点图
 </p>
 </div>
 </div>
-<div id="cell-type-annotation" class="section level2">
+<div id="细胞类型注释" class="section level2">
 <h2 class="hasAnchor">
-<a href="#cell-type-annotation" class="anchor"></a>Cell type annotation</h2>
-<p>Interpreting cell clusters in biological context is one of the most challenging tasks in scRNA-seq data analysis. Prior biological knowledge is often required to do so. Marker genes from the literatures or the curated gene sets (e.g., Gene Ontology, KEGG pathways) are the common sources of prior information. Alternatively, we can use published reference datasets where samples are well annotated with cell type information.</p>
-<p>Here we use a reference bulk RNA-seq dataset of human mammary gland epithelium from the same study <span class="citation">(Pal et al. 2021)</span>. This reference RNA-seq (GSE161892) data consists of a total of 34 samples from basal, luminal progenitor (LP), mature luminal (ML), and stromal cell types. Differential expression analysis of this reference data was performed using limma-voom and TREAT <span class="citation">(Law et al. 2014; McCarthy and Smyth 2009)</span>. Genes were considered cell type-specific if they were upregulated in one cell type vs all other types. This yielded 515, 323, 765, and 1094 signature genes for basal, LP, ML, and stroma, respectively.</p>
-<p>Here we download those signature genes and load them into R.</p>
+<a href="#%E7%BB%86%E8%83%9E%E7%B1%BB%E5%9E%8B%E6%B3%A8%E9%87%8A" class="anchor"></a>细胞类型注释</h2>
+<p>在生物学背景下解释细胞clusters是scRNA-seq数据分析中最具有挑战性的任务之一。 通常需要先验生物学知识来做到这点。 来自于文献或curated基因集（比如，Gene Ontology, KEGG pathways）的标记基因是常见的先验信息来源。 或者，我们也可以用具有详细细胞注释信息的已发表的参考数据集。</p>
+<p>这里我们使用了来自于同一研究 <span class="citation">(Pal et al. 2021)</span>的人类乳腺表皮的bulk RNA-seq数据集作为参考数据。 这套参考RNA-seq数据（GSE161892）总共包含来自basal，luminal progenitor (LP)，mature luminal (ML)和stromal细胞类型的34个样本。 这套参考数据的差异表达分析使用的是limma-voom和TREAT <span class="citation">(Law et al. 2014; McCarthy and Smyth 2009)</span>。 如果基因在某种细胞类型中相对于其他所有细胞类型是上调的，那么这些基因被认为是细胞类型特异的。 这样产生了515个basal基因，323个LP基因，765个ML基因和1094个stroma基因。</p>
+<p>这里我么下载了那些signature基因并将它们加载到R里面。</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">url.Signatures</span> <span class="op">&lt;-</span> <span class="st">"https://github.com/SmythLab/scRNAseq-Workshop/raw/main/Data/Human-PosSigGenes.RData"</span>
 <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span><span class="va">url.Signatures</span>, destfile<span class="op">=</span><span class="st">"Data/Human-PosSigGenes.RData"</span>, mode<span class="op">=</span><span class="st">"wb"</span><span class="op">)</span> </code></pre></div>
-<p>We restrict the signature genes to those expressed in the single cell data.</p>
+<p>我们限制signature基因要在单细胞数据中表达。</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/load.html">load</a></span><span class="op">(</span><span class="st">"Data/Human-PosSigGenes.RData"</span><span class="op">)</span>
 <span class="va">HumanSig</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>Basal<span class="op">=</span><span class="va">Basal</span>, LP<span class="op">=</span><span class="va">LP</span>, ML<span class="op">=</span><span class="va">ML</span>, Str<span class="op">=</span><span class="va">Str</span><span class="op">)</span>
 <span class="va">HumanSig</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">HumanSig</span>, <span class="va">intersect</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">N1469</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>To associate each cell in the single cell data with the four cell populations in the reference bulk data, we compute the signature scores of the four cell populations for each cell. Here the signature score of a particular cell type is defined as the average expression level of the cell type-specific genes in a given cell.</p>
+<p>为了将单细胞数据中的每个细胞与参考bulk数据的四种细胞类群相关联，我们为每个细胞计算了这四种细胞类群的signature score。 每一种细胞类型的signature score被定义为一个细胞中这种细胞类型特定基因的平均表达水平。</p>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">SigScore</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span>
 <span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">HumanSig</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
     <span class="va">SigScore</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html">colMeans</a></span><span class="op">(</span><span class="va">N1469</span><span class="op">@</span><span class="va">assays</span><span class="op">$</span><span class="va">RNA</span><span class="op">@</span><span class="va">data</span><span class="op">[</span><span class="va">HumanSig</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, <span class="op">]</span><span class="op">)</span>
 <span class="op">}</span></code></pre></div>
-<p>We can visualize the signature scores in both UMAP plots and violin plots.</p>
+<p>我们可以用UMAP图和小提琴图来可视化signature scores。</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">SigScores</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span><span class="op">(</span><span class="st">"cbind"</span>, <span class="va">SigScore</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">SigScores</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Basal"</span>, <span class="st">"LP"</span>, <span class="st">"ML"</span>, <span class="st">"Stroma"</span><span class="op">)</span>
@@ -384,25 +384,25 @@ A dot plot of top marker genes of each cluster.
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://satijalab.org/seurat/reference/FeaturePlot.html">FeaturePlot</a></span><span class="op">(</span><span class="va">N1469</span>, features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">SigScores</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="scRNAseqWorkshop_files/figure-html/SigScorePlot-1.png" alt="Signature scores." width="960"><p class="caption">
-Signature scores.
+<img src="scRNAseqWorkshop-Chinese_files/figure-html/SigScorePlot-1.png" alt="Signature scores" width="960"><p class="caption">
+Signature scores
 </p>
 </div>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://satijalab.org/seurat/reference/VlnPlot.html">VlnPlot</a></span><span class="op">(</span><span class="va">N1469</span>, features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">SigScores</span><span class="op">)</span>, ncol<span class="op">=</span><span class="fl">2</span>, pt.size<span class="op">=</span><span class="fl">0.1</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="scRNAseqWorkshop_files/figure-html/SigScoreViolinPlot-1.png" alt="Violin plots of signature scores." width="1056"><p class="caption">
-Violin plots of signature scores.
+<img src="scRNAseqWorkshop-Chinese_files/figure-html/SigScoreViolinPlot-1.png" alt="signature scores小提琴图" width="1056"><p class="caption">
+signature scores小提琴图
 </p>
 </div>
-<p>It can be seen that cells in cluster 2 have high expression levels of basal signature genes, suggesting these cells are likely to be basal cells. Likewise, cluster 0 and 4 are LP, cluster 1 is ML and cluster 3 is stroma.</p>
+<p>我们可以看到basal signature基因在cluster 2中具有较高表达水平，意味着这些细胞很可能是basal细胞。 相似的，cluster 0和4是LP，cluster 1是ML，cluster 3是stroma。</p>
 </div>
 </div>
-<div id="ternary-plot-analysis" class="section level1">
+<div id="三元图分析" class="section level1">
 <h1 class="hasAnchor">
-<a href="#ternary-plot-analysis" class="anchor"></a>Ternary plot analysis</h1>
-<p>Another way to visualize the correlation between the single cell and the reference bulk dataset is to make a ternary plot, which is useful for studies concerning three major cell populations. For this data, we are particularly interested in assigning each cell to one of the three major epithelial cell populations (basal, LP and ML).</p>
-<p>We produce a ternary plot to see which of the three populations the cells are closer to. To measure the similarity between each cell and three populations, we count the numbers of expressed signatures (with at least 1 count) in each cell. The position of each cell on the ternary plot is determined by the numbers of expressed gene signatures of the three populations in that cell.</p>
+<a href="#%E4%B8%89%E5%85%83%E5%9B%BE%E5%88%86%E6%9E%90" class="anchor"></a>三元图分析</h1>
+<p>另一种可视化单细胞和参考bulk数据间相关性的方法是画三元图，这种方法在注重于三个主要细胞类群的研究者很有用。 对于这套数据，我们对如何将每个细胞分配给三种主要的表皮细胞类型（basal，LP和ML）之一很感兴趣。</p>
+<p>我们生成了一个三元图来看细胞更接近于三种细胞类群中的哪一种。 为了评估每个细胞和三种类群之间的相似性，我们计数了每个细胞中表达的（至少有一个count）signature基因个数。 每个细胞在三元图上的位置由该细胞中表达的三种细胞类群的signature基因数目决定。</p>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">TN</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fl">0L</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">N1469</span><span class="op">)</span>, <span class="fl">3L</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">TN</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"LP"</span>, <span class="st">"ML"</span>, <span class="st">"Basal"</span><span class="op">)</span>
@@ -422,11 +422,11 @@ Violin plots of signature scores.
 <span class="va">col.p</span> <span class="op">&lt;-</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/hue_pal.html">hue_pal</a></span><span class="op">(</span><span class="op">)</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nlevels.html">nlevels</a></span><span class="op">(</span><span class="fu"><a href="https://satijalab.org/seurat/reference/Idents.html">Idents</a></span><span class="op">(</span><span class="va">N1469</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/vcd/man/ternaryplot.html">ternaryplot</a></span><span class="op">(</span><span class="va">TN</span>, cex<span class="op">=</span><span class="fl">0.2</span>, pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="va">col.p</span><span class="op">[</span><span class="fu"><a href="https://satijalab.org/seurat/reference/Idents.html">Idents</a></span><span class="op">(</span><span class="va">N1469</span><span class="op">)</span><span class="op">]</span>, grid<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="scRNAseqWorkshop_files/figure-html/TernaryPlot-1.png" alt="Ternary plot positioning each cell according to the proportion of basal, LP, or ML signature genes expressed by that cell." width="528"><p class="caption">
-Ternary plot positioning each cell according to the proportion of basal, LP, or ML signature genes expressed by that cell.
+<img src="scRNAseqWorkshop-Chinese_files/figure-html/TernaryPlot-1.png" alt="三元图，根据每个细胞表达的basal, LP, 和ML signature基因数目确定细胞位置" width="528"><p class="caption">
+三元图，根据每个细胞表达的basal, LP, 和ML signature基因数目确定细胞位置
 </p>
 </div>
-<p>Alternatively, the relative proportions of expressed signature genes of the cells can be used for the ternary plot analysis.</p>
+<p>或者，用细胞表达的signature基因的相对比例来进行三元图分析。</p>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">LengthSig</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">HumanSig</span>, <span class="va">length</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"LP"</span>, <span class="st">"ML"</span>, <span class="st">"Basal"</span><span class="op">)</span><span class="op">]</span>
 <span class="va">LengthSig</span></code></pre></div>
@@ -445,14 +445,14 @@ Ternary plot positioning each cell according to the proportion of basal, LP, or 
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/vcd/man/ternaryplot.html">ternaryplot</a></span><span class="op">(</span><span class="va">TN_prop</span>, cex<span class="op">=</span><span class="fl">0.2</span>, pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="va">col.p</span><span class="op">[</span><span class="fu"><a href="https://satijalab.org/seurat/reference/Idents.html">Idents</a></span><span class="op">(</span><span class="va">N1469</span><span class="op">)</span><span class="op">]</span>, grid<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="scRNAseqWorkshop_files/figure-html/TernaryPlot_prop-1.png" alt="Ternary plot positioning each cell according to the relative proportion of basal, LP, or ML signature genes expressed by that cell." width="528"><p class="caption">
-Ternary plot positioning each cell according to the relative proportion of basal, LP, or ML signature genes expressed by that cell.
+<img src="scRNAseqWorkshop-Chinese_files/figure-html/TernaryPlot_prop-1.png" alt="三元图，根据每个细胞表达的basal, LP, 和ML signature基因相对比例确定细胞位置" width="528"><p class="caption">
+三元图，根据每个细胞表达的basal, LP, 和ML signature基因相对比例确定细胞位置
 </p>
 </div>
 </div>
-<div id="session-info" class="section level1">
+<div id="session信息" class="section level1">
 <h1 class="hasAnchor">
-<a href="#session-info" class="anchor"></a>Session info</h1>
+<a href="#session%E4%BF%A1%E6%81%AF" class="anchor"></a>Session信息</h1>
 <div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code>## R version 4.1.1 (2021-08-10)
@@ -517,9 +517,9 @@ Ternary plot positioning each cell according to the relative proportion of basal
 ## [118] textshaping_0.3.5     munsell_0.5.0         viridisLite_0.4.0    
 ## [121] bslib_0.3.0</code></pre>
 </div>
-<div id="references" class="section level1 unnumbered">
+<div id="参考文献" class="section level1 unnumbered">
 <h1 class="hasAnchor">
-<a href="#references" class="anchor"></a>References</h1>
+<a href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE" class="anchor"></a>参考文献</h1>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-ilicic2016classification" class="csl-entry">
 Ilicic, Tomislav, Jong Kyoung Kim, Aleksandra A Kolodziejczyk, Frederik Otzen Bagger, Davis James McCarthy, John C Marioni, and Sarah A Teichmann. 2016. <span>“Classification of Low Quality Cells from Single-Cell RNA-Seq Data.”</span> <em>Genome Biology</em> 17 (1): 1–15.
